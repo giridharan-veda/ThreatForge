@@ -1,0 +1,20 @@
+<!--
+  Wazuh AGENT config addition (NOT the manager).
+  File: /var/ossec/etc/ossec.conf   (on the host running Node-RED, e.g. "geeky")
+
+  Insert this <localfile> block inside the correct <ossec_config>...</ossec_config>
+  pair - the one that also contains the <logging> section in this setup
+  (it was placed right after the <logging> block and before that pair's
+  closing </ossec_config>).
+
+  WARNING: if your ossec.conf has multiple <ossec_config> blocks (common -
+  check with: grep -n "ossec_config" /var/ossec/etc/ossec.conf), do NOT use
+  a global sed insert on "</ossec_config>" - it will duplicate this block
+  into every occurrence and Wazuh will log:
+    WARNING: (1958): Log file '...' is duplicated.
+  Edit manually with nano/vim instead, into ONE block only.
+-->
+<localfile>
+  <log_format>json</log_format>
+  <location>/var/log/nodered/events.log</location>
+</localfile>

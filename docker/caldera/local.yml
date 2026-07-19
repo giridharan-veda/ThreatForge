@@ -1,0 +1,18 @@
+port: 8888
+
+users:
+  blue:
+    blue: admin
+  red:
+    red: admin
+    admin: admin
+
+api_key_red: ADMIN123
+api_key_blue: BLUEADMIN123
+
+app.contact.http: http://0.0.0.0:8888
+app.contact.tcp: 0.0.0.0:7010
+app.contact.udp: 0.0.0.0:7011
+app.contact.websocket: 0.0.0.0:7012
+app.frontend.api_base_url: http://localhost:8888
+app.log.level: DEBUG

@@ -1,0 +1,13 @@
+---
+- id: 6b7e96d0-1084-406a-a670-e7ae911911cd
+  name: smart movement
+  description: Move laterally to a simulated secondary host via SSH
+  tactic: lateral-movement
+  technique:
+    attack_id: T1021.004
+    name: "Remote Services: SSH"
+  platforms:
+    linux:
+      native:
+        command: |
+          ssh 127.0.0.1 simhost kali2024

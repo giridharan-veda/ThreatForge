@@ -1,0 +1,13 @@
+---
+- id: 8d54335b-0852-4c48-9584-0d453648a13f
+  name: smart recon
+  description: Discover exposed IoT device endpoints via active scanning
+  tactic: reconnaissance
+  technique:
+    attack_id: T1595
+    name: Active Scanning
+  platforms:
+    linux:
+      native:
+        command: |
+          http GET http://localhost:1880/api/devices

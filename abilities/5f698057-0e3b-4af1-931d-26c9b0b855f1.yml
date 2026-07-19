@@ -1,0 +1,13 @@
+---
+- id: 5f698057-0e3b-4af1-931d-26c9b0b855f1
+  name: smart bulb
+  description: Manipulate smart bulb state via MQTT publish
+  tactic: impact
+  technique:
+    attack_id: T0813
+    name: Denial of Control
+  platforms:
+    linux:
+      native:
+        command: |
+          mqtt localhost OFF

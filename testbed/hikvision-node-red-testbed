@@ -1,0 +1,259 @@
+[
+    {
+        "id": "5118827003b1972b",
+        "type": "tab",
+        "label": "IoT Testbed (Fixed Outputs)",
+        "disabled": false,
+        "info": "Each function always returns an array of two messages."
+    },
+    {
+        "id": "a8164772d38ce368",
+        "type": "http in",
+        "z": "5118827003b1972b",
+        "name": "Device Recon",
+        "url": "/api/devices",
+        "method": "get",
+        "upload": false,
+        "x": 160,
+        "y": 80,
+        "wires": [
+            [
+                "16ed8166ba42d4e8"
+            ]
+        ]
+    },
+    {
+        "id": "16ed8166ba42d4e8",
+        "type": "function",
+        "z": "5118827003b1972b",
+        "name": "Recon Handler",
+        "func": "var result1 = { req: msg.req, res: msg.res };\nvar result2 = {};\ntry {\n    result1.payload = {\n        status: 'success',\n        devices: ['Camera-01', 'Lock-01', 'Bulb-01'],\n        timestamp: new Date().toISOString()\n    };\n    result2.payload = JSON.stringify({\n        timestamp: new Date().toISOString(),\n        src_ip: 'caldera_agent',\n        endpoint: '/api/devices',\n        method: 'GET',\n        status: 'reconnaissance',\n        details: 'Device list requested'\n    });\n} catch(e) {\n    result1.payload = {error: 'Internal server error'};\n    result2.payload = JSON.stringify({error: 'Logging failed'});\n}\nreturn [result1, result2];",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 380,
+        "y": 80,
+        "wires": [
+            [
+                "25f7b715257e78d6"
+            ],
+            [
+                "e21d158c3dd75f6c",
+                "50221f895420ddf8"
+            ]
+        ]
+    },
+    {
+        "id": "25f7b715257e78d6",
+        "type": "http response",
+        "z": "5118827003b1972b",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 600,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "42f55f73b5b173c2",
+        "type": "http in",
+        "z": "5118827003b1972b",
+        "name": "Camera Snapshot",
+        "url": "/api/camera/snapshot",
+        "method": "post",
+        "upload": false,
+        "x": 160,
+        "y": 180,
+        "wires": [
+            [
+                "1a086aae1cc3451f"
+            ]
+        ]
+    },
+    {
+        "id": "1a086aae1cc3451f",
+        "type": "function",
+        "z": "5118827003b1972b",
+        "name": "Snapshot Handler",
+        "func": "var result1 = { req: msg.req, res: msg.res };\nvar result2 = {};\ntry {\n    var fakeImage = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');\n    result1.payload = {\n        status: 'snapshot_captured',\n        camera_id: 'Hikvision-Front',\n        image_data: fakeImage.toString('base64'),\n        timestamp: new Date().toISOString()\n    };\n    result2.payload = JSON.stringify({\n        timestamp: new Date().toISOString(),\n        src_ip: 'caldera_agent',\n        endpoint: '/api/camera/snapshot',\n        method: 'POST',\n        status: 'collection',\n        details: 'Camera snapshot captured'\n    });\n} catch(e) {\n    result1.payload = {error: 'Internal server error'};\n    result2.payload = JSON.stringify({error: 'Logging failed'});\n}\nreturn [result1, result2];",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 380,
+        "y": 180,
+        "wires": [
+            [
+                "fbb666b76cafc475"
+            ],
+            [
+                "e21d158c3dd75f6c",
+                "50221f895420ddf8"
+            ]
+        ]
+    },
+    {
+        "id": "fbb666b76cafc475",
+        "type": "http response",
+        "z": "5118827003b1972b",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 600,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "83d455a501844fd0",
+        "type": "http in",
+        "z": "5118827003b1972b",
+        "name": "Smart Lock Unlock",
+        "url": "/api/lock/unlock",
+        "method": "post",
+        "upload": false,
+        "x": 160,
+        "y": 280,
+        "wires": [
+            [
+                "4f82f727a32e7774"
+            ]
+        ]
+    },
+    {
+        "id": "4f82f727a32e7774",
+        "type": "function",
+        "z": "5118827003b1972b",
+        "name": "Lock Handler",
+        "func": "var result1 = { req: msg.req, res: msg.res };\nvar result2 = {};\ntry {\n    var pin = '';\n    if (msg.payload && typeof msg.payload === 'object') {\n        pin = msg.payload.pin || '';\n    }\n    var unlocked = (pin === '1234');\n    result1.payload = {\n        status: unlocked ? 'unlocked' : 'failed',\n        lock_id: 'Front_Door',\n        timestamp: new Date().toISOString(),\n        message: unlocked ? 'Smart lock opened' : 'Incorrect PIN'\n    };\n    result2.payload = JSON.stringify({\n        timestamp: new Date().toISOString(),\n        src_ip: 'caldera_agent',\n        endpoint: '/api/lock/unlock',\n        method: 'POST',\n        status: unlocked ? 'impact_success' : 'impact_failure',\n        details: unlocked ? 'Lock unlocked with correct PIN' : 'Failed unlock attempt',\n        pin_attempt: pin\n    });\n} catch(e) {\n    result1.payload = {error: 'Internal server error'};\n    result2.payload = JSON.stringify({error: 'Logging failed'});\n}\nreturn [result1, result2];",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 380,
+        "y": 280,
+        "wires": [
+            [
+                "cb69221c505b4e97"
+            ],
+            [
+                "e21d158c3dd75f6c",
+                "50221f895420ddf8"
+            ]
+        ]
+    },
+    {
+        "id": "cb69221c505b4e97",
+        "type": "http response",
+        "z": "5118827003b1972b",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 600,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "8483c33ac3ed5ec5",
+        "type": "mqtt in",
+        "z": "5118827003b1972b",
+        "name": "Bulb Command",
+        "topic": "home/bulb/command",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "6e5183f6e4bbb06c",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 160,
+        "y": 380,
+        "wires": [
+            [
+                "7377d987dbe2642e"
+            ]
+        ]
+    },
+    {
+        "id": "7377d987dbe2642e",
+        "type": "function",
+        "z": "5118827003b1972b",
+        "name": "Bulb Handler",
+        "func": "var result = {};\ntry {\n    var state = (msg.payload && msg.payload.toString) ? msg.payload.toString().toUpperCase() : '';\n    var valid = (state === 'ON' || state === 'OFF');\n    result.payload = JSON.stringify({\n        timestamp: new Date().toISOString(),\n        src_ip: 'mqtt_broker',\n        endpoint: 'mqtt:home/bulb/command',\n        method: 'PUBLISH',\n        status: valid ? 'impact' : 'invalid',\n        details: valid ? 'Bulb set to ' + state : 'Invalid command: ' + state,\n        command: state\n    });\n} catch(e) {\n    result.payload = JSON.stringify({error: 'Bulb handler error'});\n}\nreturn [result];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 380,
+        "y": 380,
+        "wires": [
+            [
+                "e21d158c3dd75f6c",
+                "50221f895420ddf8"
+            ]
+        ]
+    },
+    {
+        "id": "d902546d35a47197",
+        "type": "comment",
+        "z": "5118827003b1972b",
+        "name": "Lateral movement is handled via SSH (external)",
+        "info": "The paper's lateral movement uses SSH to a local simhost account, not HTTP. The agent's ssh_exec.py will handle that. No Node‑RED endpoint needed.",
+        "x": 160,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "e21d158c3dd75f6c",
+        "type": "file",
+        "z": "5118827003b1972b",
+        "name": "Events Log",
+        "filename": "/var/log/nodered/events.log",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 600,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "50221f895420ddf8",
+        "type": "debug",
+        "z": "5118827003b1972b",
+        "name": "Debug All",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 600,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "6e5183f6e4bbb06c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

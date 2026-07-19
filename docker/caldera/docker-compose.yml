@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  caldera:
+    image: ghcr.io/mitre/caldera:latest
+    container_name: caldera_server
+    ports:
+      - "8888:8888"
+      - "7010:7010"
+      - "7011:7011/udp"
+      - "7012:7012"
+    environment:
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin
+      - CALDERA_SETTINGS=conf/local.yml
+    volumes:
+      - ./data:/usr/src/app/data
+    restart: unless-stopped
+
+volumes:
+  caldera_data:
+    name: caldera_data

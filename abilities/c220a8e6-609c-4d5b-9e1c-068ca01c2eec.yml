@@ -1,0 +1,11 @@
+---
+- id: c220a8e6-609c-4d5b-9e1c-068ca01c2eec
+  name: Hikvision
+  description: Adversary profile executing a 5-stage IoT kill chain against the Hikvision smart-home testbed
+  objective: 495a9828-cab1-44dd-a0ca-66e58177d8cc
+  atomic_ordering:
+    - 8d54335b-0852-4c48-9584-0d453648a13f
+    - a0697700-d933-47e0-adf4-d654814fa0e1
+    - 5f698057-0e3b-4af1-931d-26c9b0b855f1
+    - a05bf160-6462-4812-8be9-cfd0093f6de9
+    - 6b7e96d0-1084-406a-a670-e7ae911911cd

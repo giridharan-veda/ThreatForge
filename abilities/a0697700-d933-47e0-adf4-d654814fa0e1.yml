@@ -1,0 +1,13 @@
+---
+- id: a0697700-d933-47e0-adf4-d654814fa0e1
+  name: smart cctv snap
+  description: Capture and exfiltrate a snapshot from the smart CCTV camera
+  tactic: collection
+  technique:
+    attack_id: T1125
+    name: Video Capture
+  platforms:
+    linux:
+      native:
+        command: |
+          http POST http://localhost:1880/api/camera/snapshot

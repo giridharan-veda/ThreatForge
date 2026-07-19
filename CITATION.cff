@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+
+title: ThreatForge
+
+  If you use ThreatForge in your research,
+  please cite this repository.
+
+type: software
+
+authors:
+  - family-names: Veda Parthiban
+    given-names: Giridharan
+
+repository-code: https://github.com/giridharan-veda/ThreatForge
+
+license: MIT
+
+version: 1.0.0
+
+date-released: 2026-07-19
+
+keywords:
+  - cybersecurity
+  - mitre-caldera
+  - wazuh
+  - node-red
+  - adversary-emulation
+  - iot-security

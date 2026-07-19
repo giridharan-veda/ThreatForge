@@ -1,0 +1,61 @@
+id: c220a8e6-609c-4d5b-9e1c-068ca01c2eec
+name: Hikvision
+description: adversaries to execute 5 stage attack chain
+objective: 495a9828-cab1-44dd-a0ca-66e58177d8cc
+atomic_ordering:
+- 8d54335b-0852-4c48-9584-0d453648a13f
+- a0697700-d933-47e0-adf4-d654814fa0e1
+- 5f698057-0e3b-4af1-931d-26c9b0b855f1
+- a05bf160-6462-4812-8be9-cfd0093f6de9
+- 6b7e96d0-1084-406a-a670-e7ae911911cd
+abilities:
+ 8d54335b-0852-4c48-9584-0d453648a13f:
+  name:  smart recon
+  tactic:  reconnaissance
+  technique_name:  "Conduct active scanning"
+  technique_id:  TA0043
+  executors: 
+   - native:
+     platform: linux
+     command: |
+              http GET http://localhost:1880/api/devices
+ a0697700-d933-47e0-adf4-d654814fa0e1:
+  name:  smart cctv snap
+  tactic:  collection
+  technique_name:  "Video Capture"
+  technique_id:  T1125
+  executors: 
+   - native:
+     platform: linux
+     command: |
+              http POST http://localhost:1880/api/camera/snapshot
+ 5f698057-0e3b-4af1-931d-26c9b0b855f1:
+  name:  smart bulb
+  tactic:  impact
+  technique_name:  "Endpoint Denial of Service"
+  technique_id:  T0813
+  executors: 
+   - native:
+     platform: linux
+     command: |
+              mqtt localhost OFF
+ a05bf160-6462-4812-8be9-cfd0093f6de9:
+  name:  smart unlock
+  tactic:  impact
+  technique_name:  "modify parameter"
+  technique_id:  T0836
+  executors: 
+   - native:
+     platform: linux
+     command: |
+            curl -s -X POST http://localhost:1880/api/lock/unlock -H "Content-Type: application/json" -d '{"pin":"1234"}'
+ 6b7e96d0-1084-406a-a670-e7ae911911cd:
+  name:  smart movement
+  tactic:  lateral-movement
+  technique_name:  "Remote Services: SSH"
+  technique_id:  T1021.004
+  executors: 
+   - native:
+     platform: linux
+     command: |
+              ssh 127.0.0.1 simhost kali2024
