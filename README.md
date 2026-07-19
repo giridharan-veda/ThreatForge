@@ -1,376 +1,395 @@
-# ThreatForge
-
-<p align="center">
-
-<img src="docs/images/logo.png" alt="ThreatForge" width="180"/>
+<div align="center">
 
 # ThreatForge
 
-### An IoT Adversary Emulation Framework for Smart Home Cybersecurity Research
+**An IoT Adversary Emulation Framework for Smart Home Cybersecurity Research**
 
-**ThreatForge** is an open-source cybersecurity research framework that enables realistic adversary emulation against Internet of Things (IoT) environments using **MITRE CALDERA**, **Node-RED**, and **Wazuh**. The framework provides a reproducible platform for evaluating detection capabilities, validating defensive controls, and conducting ATT&CK-aligned security research within simulated smart-home infrastructures.
+Reproducible, ATT&CK-aligned adversary emulation for smart-home IoT environments — built on **MITRE CALDERA**, **Node-RED**, and **Wazuh**.
 
----
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![MITRE CALDERA](https://img.shields.io/badge/MITRE-CALDERA-red)](https://caldera.mitre.org/)
+[![Wazuh](https://img.shields.io/badge/Wazuh-005571?logo=wazuh&logoColor=white)](https://wazuh.com/)
+[![Node-RED](https://img.shields.io/badge/Node--RED-B22222?logo=nodered&logoColor=white)](https://nodered.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)
-![MITRE CALDERA](https://img.shields.io/badge/MITRE-CALDERA-red)
-![Wazuh](https://img.shields.io/badge/Wazuh-005571)
-![Node-RED](https://img.shields.io/badge/Node--RED-B22222?logo=nodered)
-![Research](https://img.shields.io/badge/Research-Cybersecurity-success)
-![License](https://img.shields.io/badge/License-MIT-green)
+[Overview](#overview) •
+[Why ThreatForge](#why-threatforge) •
+[Architecture](#architecture) •
+[ThreatForge Agent](#threatforge-agent) •
+[ATT&CK Coverage](#attck-technique-coverage) •
+[Detection Engineering](#detection-engineering) •
+[Quick Start](#quick-start) •
+[Evaluation](#evaluation--research-results) •
+[Documentation](#documentation) •
+[Roadmap](#roadmap)
 
-</p>
-
----
-
-# Overview
-
-ThreatForge is a modular adversary emulation framework designed specifically for **IoT security research**.
-
-Traditional adversary emulation platforms primarily target enterprise Windows and Linux environments. ThreatForge extends this capability into smart-home IoT ecosystems by integrating custom adversary behaviors with simulated devices and security monitoring infrastructure.
-
-The framework enables researchers, students, blue teams, and detection engineers to reproduce realistic attack scenarios while evaluating defensive visibility through the MITRE ATT&CK framework.
-
-ThreatForge combines:
-
-- MITRE CALDERA for adversary emulation
-- Node-RED for IoT device simulation
-- Wazuh for detection engineering
-- Custom ThreatForge Agent for IoT protocol interaction
-- Docker for reproducible deployment
+</div>
 
 ---
 
-# Key Features
+## Overview
 
-- IoT-focused Adversary Emulation
-- Custom MITRE CALDERA Agent
-- ATT&CK-aligned Adversary Profiles
-- Modular CALDERA Abilities
-- Smart Home IoT Simulation
-- MQTT, HTTP and SSH Attack Execution
-- Wazuh Detection Engineering
-- Automated Attack Chain Execution
-- Reproducible Research Environment
-- Docker-based Deployment
+Most adversary emulation platforms — CALDERA, Atomic Red Team, Metta — target enterprise Windows and Linux infrastructure. There is no equivalent, reproducible standard for **consumer IoT and smart-home environments**, despite IoT devices being one of the fastest-growing and least-instrumented attack surfaces in the field.
+
+**ThreatForge** closes that gap. It extends MITRE CALDERA's emulation engine with a purpose-built agent, protocol handlers, and a simulated smart-home testbed, so that researchers can run reproducible, ATT&CK-aligned attack chains against IoT devices and measure detection coverage end-to-end — from adversary action, to device-level effect, to SIEM alert.
+
+ThreatForge integrates:
+
+- **MITRE CALDERA** — adversary emulation engine, operation orchestration, and C2
+- **ThreatForge Agent** — a custom CALDERA agent that speaks MQTT, HTTP, and SSH natively to IoT devices
+- **Node-RED** — smart-home device and protocol simulation (cameras, locks, sensors, hubs)
+- **Wazuh** — detection engineering, log ingestion, correlation, and alerting
+- **Docker Compose** — single-command, fully reproducible lab deployment
+
+The result is a closed-loop research pipeline: launch an attack chain against simulated smart-home devices, observe the resulting device and network telemetry, and measure precisely how well a given detection stack catches it — with results that are reproducible run-to-run and citable in academic work.
+
+## Why ThreatForge
+
+| Problem in existing tooling | How ThreatForge addresses it |
+|---|---|
+| Emulation frameworks assume Windows/Linux endpoints and EDR telemetry | ThreatForge Agent is protocol-native (MQTT/HTTP/SSH) instead of host-agent-based, matching how real IoT devices are actually reached |
+| IoT security research is hard to reproduce across papers/labs | Fully declarative, Docker Compose-based lab; identical topology every run |
+| No standard mapping of IoT attacker behavior to ATT&CK | Every ability ships with an explicit ATT&CK technique ID (see [coverage table](#attck-technique-coverage)) |
+| Detection validation is usually manual and ad hoc | Wazuh rules and decoders are versioned in-repo and tied 1:1 to abilities, so detection efficacy is measurable, not anecdotal |
+| Hard to safely demo IoT attacks for training/education | Node-RED testbed simulates device behavior — no physical hardware or real network exposure required |
 
 ---
 
-# Architecture
+## Key Features
 
-<p align="center">
+| Category | Capability |
+|---|---|
+| **Emulation** | IoT-focused adversary emulation via a custom MITRE CALDERA agent |
+| **Coverage** | ATT&CK-aligned adversary profiles and modular CALDERA abilities |
+| **Simulation** | Realistic smart-home IoT testbed powered by Node-RED |
+| **Protocols** | Native support for MQTT, HTTP, and SSH attack execution |
+| **Detection** | Wazuh-based detection engineering and rule validation |
+| **Automation** | Fully automated, repeatable attack-chain execution |
+| **Reproducibility** | Docker-based deployment for consistent research environments |
 
-<img src="paper/architecture/architecture.png" width="900">
+---
 
-</p>
+## Architecture
 
 ```
-                    +---------------------------+
-                    |      MITRE CALDERA        |
-                    | Adversary Emulation Engine|
-                    +------------+--------------+
-                                 |
-                                 |
-                                 ▼
-                     +------------------------+
-                     |   ThreatForge Agent    |
-                     | Ability Execution Core |
-                     +------------+-----------+
-                                  |
-          +-----------------------+-----------------------+
-          |                       |                       |
-          ▼                       ▼                       ▼
-       HTTP API                 MQTT                    SSH
-          |                       |                       |
-          +-----------------------+-----------------------+
-                                  |
-                                  ▼
-                     +----------------------------+
-                     |     Node-RED Testbed       |
-                     | Smart Home IoT Simulation  |
-                     +-------------+--------------+
-                                   |
-                                   ▼
-                          IoT Event Generation
-                                   |
-                                   ▼
-                        +-----------------------+
-                        |        Wazuh          |
-                        | Detection & Monitoring|
-                        +-----------------------+
+┌──────────────────────────────┐
+│         MITRE CALDERA        │
+│  Adversary Emulation Engine  │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│       ThreatForge Agent      │
+│    Ability Execution Core    │
+└───────────────┬───────────────┘
+                │
+   ┌────────────┼────────────┐
+   ▼            ▼            ▼
+ HTTP API      MQTT          SSH
+   │            │            │
+   └────────────┼────────────┘
+                ▼
+┌──────────────────────────────┐
+│        Node-RED Testbed      │
+│  Smart-Home IoT Simulation   │
+└───────────────┬───────────────┘
+                │
+                ▼
+        IoT Event Generation
+                │
+                ▼
+┌──────────────────────────────┐
+│             Wazuh            │
+│   Detection & Monitoring     │
+└──────────────────────────────┘
+```
+
+**Flow:** CALDERA orchestrates operations → the ThreatForge Agent executes abilities against the testbed over HTTP, MQTT, or SSH → Node-RED simulates smart-home device responses and emits IoT events → Wazuh ingests and analyzes the resulting telemetry for detection validation.
+
+### Data Flow & Ports
+
+| Hop | Protocol / Port | Description |
+|---|---|---|
+| CALDERA → ThreatForge Agent | HTTPS `8888` (CALDERA API) | Operation tasking, ability retrieval, result reporting (beacon-style) |
+| Agent → IoT Testbed (HTTP) | HTTP `1880` (Node-RED) | Device state queries, snapshot retrieval, REST-style device control |
+| Agent → IoT Testbed (MQTT) | MQTT `1883` | Topic-based command injection and telemetry subscription |
+| Agent → IoT Testbed (SSH) | SSH `22` | Remote command execution against emulated embedded-Linux devices |
+| Node-RED → Wazuh | Syslog / Filebeat `514` / `5044` | IoT event and log forwarding into the detection pipeline |
+| Analyst → Wazuh Dashboard | HTTPS `443` | Alert triage, rule tuning, and detection validation |
+
+---
+
+## ThreatForge Agent
+
+The ThreatForge Agent is the framework's core technical contribution: a CALDERA-compatible agent that, unlike standard host-based agents, acts as a **protocol bridge** between CALDERA's tasking model and IoT device interfaces.
+
+- **Beacon-based tasking** — polls CALDERA over HTTPS for queued abilities, consistent with CALDERA's native agent contract
+- **Multi-protocol executors** — dispatches each ability through the correct handler (`http_executor`, `mqtt_executor`, `ssh_executor`) based on ability metadata
+- **Fact-driven targeting** — consumes CALDERA facts (device IP, MQTT topic, credentials) so abilities generalize across multiple simulated devices rather than being hardcoded
+- **Structured result reporting** — returns execution status, stdout/stderr, and timing data back to CALDERA for operation-level scoring
+- **Extensible executor interface** — new protocols (e.g., CoAP, BLE) can be added by implementing a single executor class
+
+```
+agent/
+├── core/
+│   ├── beacon.py          # CALDERA check-in and tasking loop
+│   ├── executor_base.py   # Abstract executor interface
+│   └── fact_resolver.py   # Resolves CALDERA facts into device targets
+├── executors/
+│   ├── http_executor.py
+│   ├── mqtt_executor.py
+│   └── ssh_executor.py
+└── config/
+    └── agent.yml          # Agent identity, C2 endpoint, protocol credentials
 ```
 
 ---
 
-# Repository Structure
+## ATT&CK Technique Coverage
+
+Every ability in `abilities/` is explicitly tagged with a MITRE ATT&CK technique ID, so operations produce a measurable, citable coverage map rather than an anecdotal attack narrative.
+
+| Tactic | Technique | ID | ThreatForge Implementation |
+|---|---|---|---|
+| Reconnaissance | Active Scanning | T1595 | Network and mDNS-based smart-home device discovery |
+| Initial Access | Exploit Public-Facing Application | T1190 | Simulated device web/API exploitation via HTTP executor |
+| Execution | Command and Scripting Interpreter | T1059 | Remote command execution over the SSH executor |
+| Persistence | Valid Accounts | T1078 | Reuse of default/weak device credentials |
+| Collection | Data from Local System | T1005 | Camera snapshot and media collection from simulated devices |
+| Command and Control | Application Layer Protocol | T1071.001 | MQTT-based command channel to compromised devices |
+| Impact | Service Stop / Manipulation | T1489 | Smart lock state manipulation (lock/unlock abuse) |
+
+> Full technique-to-ability mapping is maintained in [`abilities/`](abilities/) and cross-referenced in the [research paper](paper/).
+
+---
+
+## Detection Engineering
+
+Wazuh integration is treated as a first-class research artifact, not an afterthought — each attack ability has a corresponding, versioned detection rule so that **detection efficacy can be measured, not assumed**.
+
+- **Custom decoders** parse Node-RED and MQTT broker logs into structured fields Wazuh can correlate on
+- **Custom rule sets**, grouped by tactic, alert on the specific IoT behaviors each ability produces (e.g., anomalous MQTT publish rates, unauthorized lock-state changes, repeated snapshot requests)
+- **Rule-to-ability traceability** — every rule ID in [`wazuh/`](wazuh/) references the ability ID that should trigger it, enabling precise true-positive/false-negative analysis per run
+- **Dashboards** provide operation-level views: techniques executed vs. techniques detected, mean time-to-alert, and per-device alert volume
+
+```
+wazuh/
+├── decoders/        Custom log decoders (Node-RED, MQTT broker, SSH)
+├── rules/           Detection rules, grouped by ATT&CK tactic
+└── dashboards/       Wazuh dashboard exports for operation-level reporting
+```
+
+---
+
+## System Requirements
+
+| Requirement | Minimum | Recommended |
+|---|---|---|
+| OS | Linux / macOS / Windows (WSL2) | Ubuntu 22.04 LTS |
+| CPU | 4 cores | 8 cores |
+| RAM | 8 GB | 16 GB |
+| Disk | 20 GB free | 40 GB free (SSD) |
+| Docker Engine | 24.x | Latest stable |
+| Docker Compose | v2 | v2 |
+| Python | 3.10 | 3.11+ |
+
+---
+
+## Repository Structure
 
 ```
 ThreatForge/
-│
-├── paper/                 → Research Paper
-├── docs/                  → Documentation
-├── agent/                 → ThreatForge Agent
-├── abilities/             → MITRE CALDERA Abilities
-├── adversary/             → Adversary Profiles
-├── testbed/               → Node-RED IoT Simulation
-├── wazuh/                 → Detection Rules
-├── docker/                → Docker Configuration
-├── scripts/               → Helper Scripts
-└── reports/               → Experimental Results
+├── paper/          Research paper (architecture, methodology, evaluation)
+├── docs/            Documentation (setup, usage, reference)
+├── agent/           ThreatForge Agent source
+├── abilities/       MITRE CALDERA abilities
+├── adversary/        Adversary profiles
+├── testbed/          Node-RED smart-home IoT simulation
+├── wazuh/            Detection rules and configuration
+├── docker/           Docker & container configuration
+├── scripts/          Setup and helper scripts
+└── reports/          Experimental results
 ```
 
 ---
 
-# Technology Stack
+## Technology Stack
 
-| Component | Purpose |
-|------------|----------------------------------------------|
-| MITRE CALDERA | Adversary Emulation |
-| Python | ThreatForge Agent |
-| Node-RED | Smart Home Simulation |
-| MQTT | IoT Communication |
-| HTTP | Device Interaction |
-| SSH | Remote Command Execution |
-| Wazuh | Detection & Monitoring |
-| Docker | Environment Deployment |
-
----
-
-# Experimental Workflow
-
-```
-Initialize Lab
-        │
-        ▼
-Deploy Docker Environment
-        │
-        ▼
-Start CALDERA
-        │
-        ▼
-Register ThreatForge Agent
-        │
-        ▼
-Import Adversary Profile
-        │
-        ▼
-Execute Operation
-        │
-        ▼
-Interact with IoT Devices
-        │
-        ▼
-Generate Security Events
-        │
-        ▼
-Detect using Wazuh
-        │
-        ▼
-Collect Reports
-```
+| Component | Role |
+|---|---|
+| MITRE CALDERA | Adversary emulation and operation management |
+| Python | ThreatForge Agent implementation |
+| Node-RED | Smart-home device simulation |
+| MQTT | IoT device communication protocol |
+| HTTP | Device interaction and API layer |
+| SSH | Remote command execution |
+| Wazuh | Detection, monitoring, and alerting |
+| Docker | Reproducible environment deployment |
 
 ---
 
-# Supported Attack Simulation
+## Supported Attack Scenarios
 
-ThreatForge currently supports the following IoT attack scenarios:
+- Device discovery and enumeration
+- Camera snapshot collection
+- MQTT command injection
+- Smart lock manipulation
+- SSH-based remote execution
+- Security event generation
+- End-to-end detection validation
 
-- Device Discovery
-- Camera Snapshot Collection
-- MQTT Command Injection
-- Smart Lock Manipulation
-- SSH Remote Execution
-- Event Generation
-- Detection Validation
-
-Additional attack scenarios can be added by creating new CALDERA abilities and adversary profiles.
+Additional scenarios can be added by creating new CALDERA abilities and adversary profiles — see [Contributing](#contributing).
 
 ---
 
-# Quick Start
+## How ThreatForge Compares
 
-Clone the repository.
+| Capability | Vanilla CALDERA | Atomic Red Team | IoT honeypots (e.g. IoTPOT) | **ThreatForge** |
+|---|---|---|---|---|
+| ATT&CK-aligned operations | ✅ | ✅ | ❌ | ✅ |
+| IoT-native protocol execution (MQTT/HTTP/SSH to devices) | ❌ | ❌ | Partial | ✅ |
+| Reproducible, containerized smart-home testbed | ❌ | ❌ | ❌ | ✅ |
+| Detection-rule-to-technique traceability | ❌ | ❌ | ❌ | ✅ |
+| Designed for passive attacker observation | ❌ | ❌ | ✅ | ❌ (active emulation, not a honeypot) |
+| Purpose-built for smart-home research | ❌ | ❌ | Partial | ✅ |
+
+ThreatForge is not a replacement for CALDERA — it **is** CALDERA, extended with the agent, protocol layer, and testbed needed to bring the same emulation discipline to IoT.
+
+---
+
+## Evaluation & Research Results
+
+The accompanying [research paper](paper/) documents evaluation of ThreatForge against the full attack-chain catalog in [`abilities/`](abilities/), including:
+
+- **Detection coverage** — proportion of executed ATT&CK techniques generating a corresponding Wazuh alert
+- **Mean time-to-alert** — latency between ability execution and detection, per tactic
+- **False-negative analysis** — techniques executed without a matching alert, used to drive new Wazuh rule development
+- **Cross-run reproducibility** — variance in results across repeated operations on an identical Docker topology
+
+Raw and aggregated results for each experimental run are stored under [`reports/`](reports/) and referenced by run ID in the paper, so findings can be independently reproduced from this repository alone.
+
+---
+
+## Quick Start
+
+**1. Clone the repository**
 
 ```bash
 git clone https://github.com/giridharan-veda/ThreatForge.git
-
 cd ThreatForge
 ```
 
-Install dependencies.
+**2. Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the setup script.
+**3. Run the setup script**
 
 ```bash
 chmod +x scripts/setup.sh
-
 ./scripts/setup.sh
 ```
 
-Start the laboratory.
+**4. Launch the lab**
 
 ```bash
 docker compose up -d
 ```
 
-Open:
+**5. Open the consoles**
 
-```
-MITRE CALDERA
+| Service | Purpose |
+|---|---|
+| MITRE CALDERA | Operation control and adversary management |
+| Node-RED | IoT testbed visualization |
+| Wazuh Dashboard | Detection monitoring and alerting |
 
-Node-RED
+**6. Run an operation**
 
-Wazuh Dashboard
-```
-
-Execute the Hikvision adversary profile.
-
-Monitor detections.
+Execute the Hikvision adversary profile and monitor detections in real time via the Wazuh dashboard.
 
 ---
 
-# Documentation
+## Documentation
 
-Detailed documentation is available under:
-
-```
-docs/
-```
+Full documentation lives under [`docs/`](docs/):
 
 | Document | Description |
-|-----------|-------------|
-| setup-guide.md | Installation Guide |
-| usage-guide.md | Running ThreatForge |
-| README.md | Documentation Index |
+|---|---|
+| `setup-guide.md` | Full installation and configuration guide |
+| `usage-guide.md` | Running operations with ThreatForge |
+| `README.md` | Documentation index |
+
+The complete research paper — covering architecture, implementation, methodology, and evaluation — is available under [`paper/`](paper/).
 
 ---
 
-# Research Paper
-
-The complete research paper describing the architecture, implementation, methodology and evaluation is located under
-
-```
-paper/
-```
-
----
-
-# Project Objectives
-
-ThreatForge aims to:
+## Project Objectives
 
 - Extend adversary emulation into IoT environments
-- Improve defensive visibility
-- Validate Wazuh detection capabilities
-- Map attacks to MITRE ATT&CK
-- Support reproducible cybersecurity research
+- Improve defensive visibility for smart-home ecosystems
+- Validate Wazuh detection capabilities against realistic attack chains
+- Map IoT attack behavior to MITRE ATT&CK
+- Support reproducible, citable cybersecurity research
 - Facilitate purple-team exercises
 
----
+## Intended Audience
 
-# Intended Audience
-
-ThreatForge is designed for:
-
-- Cybersecurity Researchers
-- SOC Analysts
-- Detection Engineers
-- Blue Teams
-- Purple Teams
-- Academic Institutions
-- Security Students
-- IoT Researchers
+Cybersecurity researchers · SOC analysts · detection engineers · blue & purple teams · academic institutions · security students · IoT researchers
 
 ---
 
-# Research Contributions
+## Roadmap
 
-This project introduces:
-
-- A custom IoT adversary emulation agent
-- ATT&CK-aligned IoT attack chains
-- Node-RED based smart-home simulation
-- Wazuh detection engineering for IoT attacks
-- A reproducible Docker-based research environment
-
----
-
-# Citation
-
-If you use ThreatForge in academic research, publications, or security evaluations, please cite this repository using the provided **CITATION.cff** file.
-
-BibTeX and other citation formats are automatically generated by GitHub.
+- [ ] Additional IoT device profiles
+- [ ] BLE and Zigbee protocol support
+- [ ] ICS/SCADA device simulation
+- [ ] AI-assisted adversary planning
+- [ ] Automated detection validation
+- [ ] Multi-agent adversary emulation
+- [ ] Expanded ATT&CK coverage
 
 ---
 
-# Roadmap
+## Contributing
 
-Planned future enhancements include:
+Contributions are welcome and appreciated.
 
-- Additional IoT device profiles
-- BLE and Zigbee protocol support
-- ICS/SCADA device simulation
-- AI-assisted adversary planning
-- Automated detection validation
-- Multi-agent adversary emulation
-- ATT&CK coverage expansion
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
 
----
-
-# Contributing
-
-Contributions are welcome.
-
-If you would like to contribute:
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Submit a Pull Request.
-
-For major changes, please open an Issue before implementation.
+For significant changes, please open an Issue first to discuss the proposed direction.
 
 ---
 
-# Disclaimer
+## Citation
 
-ThreatForge is developed **solely for educational, research, and authorized security testing purposes**.
-
-The authors are **not responsible for any misuse** of this software. Users are responsible for ensuring compliance with applicable laws, organizational policies, and ethical guidelines.
+If you use ThreatForge in academic research, publications, or security evaluations, please cite this repository using the included [`CITATION.cff`](CITATION.cff). BibTeX and other citation formats are generated automatically by GitHub.
 
 ---
 
-# License
+## Disclaimer
 
-This project is licensed under the MIT License.
-
-See the **LICENSE** file for additional information.
+ThreatForge is developed **solely for educational, research, and authorized security testing purposes**. The authors are not responsible for any misuse of this software. Users are responsible for ensuring compliance with all applicable laws, organizational policies, and ethical guidelines.
 
 ---
 
-# Acknowledgements
+## License
 
-ThreatForge builds upon several outstanding open-source cybersecurity projects and communities.
+Licensed under the [MIT License](LICENSE).
 
-Special thanks to:
+## Acknowledgements
 
-- MITRE CALDERA
-- Wazuh
-- Node-RED
-- Docker
-- Python Community
+ThreatForge builds on the work of outstanding open-source projects and communities, including MITRE CALDERA, Wazuh, Node-RED, Docker, and the broader Python community.
 
-Their continued contributions have significantly advanced cybersecurity research and education.
-
----
-
-<p align="center">
+<div align="center">
 
 **ThreatForge — Forging Adversaries. Strengthening Defenders.**
 
-</p>
+</div>
