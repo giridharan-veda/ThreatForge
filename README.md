@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="research-work/screenshots/threatforge-cover.svg" width="100%" alt="ThreatForge — IoT Adversary Emulation Framework, five-stage kill chain: Recon, Exploit, C2, Collect, Impact">
+<img src="research/screenshots/threatforge-cover.svg" width="100%" alt="ThreatForge — IoT Adversary Emulation Framework, five-stage kill chain: Recon, Exploit, C2, Collect, Impact">
 
 # ThreatForge
 
@@ -76,7 +76,7 @@ The result is a closed-loop research pipeline: launch an attack chain against si
 ## Architecture
 
 <p align="center">
-  <img src="research-work/screenshots/arch.png" width="420" alt="ThreatForge Single-Host Architecture — Five-Stage IoT Kill Chain">
+  <img src="research/screenshots/arch.png" width="420" alt="ThreatForge Single-Host Architecture — Five-Stage IoT Kill Chain">
 </p>
 
 <p align="center"><em>Single-host, five-stage architecture: MITRE Caldera (Phase 0) tasks the custom Hikvision agent (Phase 1), which drives the HTTP, MQTT, and SSH executors (Phase 2) against the Node-RED testbed and services (Phase 3); resulting telemetry is baselined and ingested by the Wazuh agent (Phase 4) and surfaced through the Wazuh Indexer + Dashboard for execution, verification, and measurement (Phase 5).</em></p>
@@ -123,7 +123,7 @@ agent/
 The Node-RED testbed that the agent drives is wired as a set of function-node handlers, one per attack primitive, each logging its result to a shared events log:
 
 <p align="center">
-  <img src="research-work/screenshots/hikvision-testbed.png" width="480" alt="Node-RED IoT testbed flow — Recon, Snapshot, Lock, and Bulb handlers">
+  <img src="research/screenshots/hikvision-testbed.png" width="480" alt="Node-RED IoT testbed flow — Recon, Snapshot, Lock, and Bulb handlers">
 </p>
 
 <p align="center"><em>Node-RED flow for the smart-home testbed: Device Recon, Camera Snapshot, and Smart Lock Unlock inputs are routed through dedicated handler function nodes, each returning an HTTP 200 and writing to the Events Log; the MQTT-driven Bulb Command follows the same pattern. Lateral movement is handled out-of-band via SSH, as noted on the canvas.</em></p>
@@ -149,9 +149,9 @@ Every ability in `abilities/` is explicitly tagged with a MITRE ATT&CK technique
 These abilities are defined and managed directly in CALDERA, tagged by tactic and ATT&CK technique ID, and grouped under a dedicated `iot-adversary` profile for repeatable operations:
 
 <p align="center">
-  <img src="research-work/screenshots/cx-abilities-caldera.png" width="440" alt="CALDERA abilities — smart device recon, smart unlock, smart bulb, smart movement">
+  <img src="research/screenshots/cx-abilities-caldera.png" width="440" alt="CALDERA abilities — smart device recon, smart unlock, smart bulb, smart movement">
   &nbsp;&nbsp;
-  <img src="research-work/screenshots/agent-caldera.png" width="440" alt="CALDERA adversary profile — iot-adversary">
+  <img src="research/screenshots/agent-caldera.png" width="440" alt="CALDERA adversary profile — iot-adversary">
 </p>
 
 <p align="center"><em>Left: the ThreatForge abilities registered in CALDERA — smart device recon (T1595.003), smart unlock (T0836), smart bulb (T0813), and smart movement (T1021.004) — filtered by the "smart" search tag. Right: the `iot-adversary` profile shell in CALDERA's Adversaries view, into which these abilities are assembled for a repeatable operation.</em></p>
@@ -175,19 +175,19 @@ wazuh/
 ```
 
 <p align="center">
-  <img src="research-work/screenshots/theratperformance.png" width="600" alt="Wazuh malware detection dashboard — agents evolution and events by rule group">
+  <img src="research/screenshots/theratperformance.png" width="600" alt="Wazuh malware detection dashboard — agents evolution and events by rule group">
 </p>
 
 <p align="center"><em>Wazuh's Malware Detection view, filtered to the `rootcheck`, `virustotal`, and `yara` rule groups for the `hik-vision` agent, showing agent check-in evolution and event volume by rule group over the last 24 hours.</em></p>
 
 <p align="center">
-  <img src="research-work/screenshots/detectionrate.png" width="600" alt="Wazuh threat hunting dashboard — 194 total alerts for hik-vision agent">
+  <img src="research/screenshots/detectionrate.png" width="600" alt="Wazuh threat hunting dashboard — 194 total alerts for hik-vision agent">
 </p>
 
 <p align="center"><em>Wazuh Threat Hunting overview for the `hik-vision` agent: 194 total alerts, including 2 level-12-or-above critical alerts, 0 authentication failures against 49 authentication successes, and the top 10 alert groups evolving over time — including the custom `iot_attack` and `iot_attack_chain` rule groups.</em></p>
 
 <p align="center">
-  <img src="research-work/screenshots/cx-detection-rules.png" width="600" alt="Wazuh alert events — custom IoT rule descriptions and rule IDs">
+  <img src="research/screenshots/cx-detection-rules.png" width="600" alt="Wazuh alert events — custom IoT rule descriptions and rule IDs">
 </p>
 
 <p align="center"><em>Raw Wazuh alert events for the `hik-vision` agent, showing the custom ThreatForge detection rules firing in sequence — IoT device discovery (rule 100100), an unauthorized smart lock unlock with the correct PIN (rule 100120, level 12), and MQTT smart bulb manipulation (rule 100130) — interleaved with baseline PAM, sudo, and rootcheck telemetry.</em></p>
@@ -282,13 +282,13 @@ The accompanying [research paper](paper/) documents evaluation of ThreatForge ag
 Raw and aggregated results for each experimental run are stored under [`reports/`](reports/) and referenced by run ID in the paper, so findings can be independently reproduced from this repository alone.
 
 <p align="center">
-  <img src="research-work/screenshots/iot-5stage-attack-completed-caldera.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+  <img src="research/screenshots/iot-5stage-attack-completed-caldera.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
 </p>
 
 <p align="center"><em>A completed CALDERA operation running the five-stage IoT attack chain against host `geeky`: smart device recon (reconnaissance), smart CCTV snap (collection), and smart bulb (impact) succeeded, smart unlock (impact) failed, and smart movement (lateral movement) succeeded — each row linked to its full command and output for auditability.</em></p>
 
 <p align="center">
-  <img src="research-work/screenshots/threatanalysis.png" width="600" alt="Wazuh endpoint summary for the hik-vision agent — system inventory and compliance">
+  <img src="research/screenshots/threatanalysis.png" width="600" alt="Wazuh endpoint summary for the hik-vision agent — system inventory and compliance">
 </p>
 
 <p align="center"><em>Wazuh endpoint summary for the `hik-vision` agent: system inventory, 24-hour events-count evolution, top MITRE ATT&CK tactics observed (Defense Evasion, Privilege Escalation, Initial Access, Persistence), and PCI DSS compliance mapping — generated automatically from a single ThreatForge operation run.</em></p>
