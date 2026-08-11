@@ -45,6 +45,11 @@ ThreatForge integrates:
 - **Wazuh** — detection engineering, log ingestion, correlation, and alerting
 - **Docker Compose** — single-command, fully reproducible lab deployment
 
+
+<p align="center">
+  <img src="research/architecture/6-stage-development-pipeline.svg" width="420" alt="ThreatForge Six - Stage developmental pipeline">
+</p>
+
 The result is a closed-loop research pipeline: launch an attack chain against simulated smart-home devices, observe the resulting device and network telemetry, and measure precisely how well a given detection stack catches it — with results that are reproducible run-to-run and citable in academic work.
 
 ## Why ThreatForge
@@ -74,12 +79,6 @@ The result is a closed-loop research pipeline: launch an attack chain against si
 ---
 
 ## Architecture
-
-<p align="center">
-  <img src="research/architecture/6-stage-development-pipeline.svg" width="420" alt="ThreatForge Six - Stage developmental pipeline">
-</p>
-
-<p align="center"><em>(Stage 1) Custom Agent Development: Develops a custom agent with five components: externalised environment configuration, a core controller for registration, beaconing and dispatch, and three protocol-specific executors for HTTP, MQTT and SSH. (Stage 2) Ability and Adversary Profile: Defines five discrete abilities, each mapped to an ATT&CK technique, and combines them into a Custom IoT Adversary profile representing reconnaissance, collection, impact and lateral movement. (Stage 3) IoT Testbed Design: Develops the Node-RED testbed around four endpoint handlers: device reconnaissance, camera snapshot, smart-lock control and smart-bulb messaging, following the dual-output design. (Stage 4) Detection Layer Design: Structures telemetry ingestion and detection rules so that each distinct telemetry outcome maps to a corresponding MITRE-tagged alert. (Stage 5) System Integration: Integrates the agent, adversary profile, testbed and detection layer so that every technique in the adversary profile has a traceable path to at least one corresponding detection rule. (Stage 6) Correlation Structure: Generates three logically independent data streams—adversary operation logs, testbed telemetry logs and SIEM alert logs—to support their correlation and subsequent analysis.</em></p>
 
 **Flow:** CALDERA orchestrates operations → the ThreatForge Agent executes abilities against the testbed over HTTP, MQTT, or SSH → Node-RED simulates smart-home device responses and emits IoT events → Wazuh ingests and analyzes the resulting telemetry for detection validation.
 
@@ -183,20 +182,21 @@ wazuh/
 └── dashboards/       Wazuh dashboard exports for operation-level reporting
 ```
 
+
 <p align="center">
-  <img src="research/screenshots/theratperformance.png" width="600" alt="Wazuh malware detection dashboard — agents evolution and events by rule group">
+  <img src="research/screenshots/threatanalysis.png" width="450" alt="Wazuh endpoint summary for the hik-vision agent — system inventory and compliance">
 </p>
 
-<p align="center"><em>Wazuh's Malware Detection view, filtered to the `rootcheck`, `virustotal`, and `yara` rule groups for the `hik-vision` agent, showing agent check-in evolution and event volume by rule group over the last 24 hours.</em></p>
+<p align="center"><em>Wazuh endpoint summary for the `hik-vision` agent: system inventory, 24-hour events-count evolution, top MITRE ATT&CK tactics observed (Defense Evasion, Privilege Escalation, Initial Access, Persistence), and PCI DSS compliance mapping — generated automatically from a single ThreatForge operation run.</em></p>
 
 <p align="center">
-  <img src="research/screenshots/detectionrate.png" width="600" alt="Wazuh threat hunting dashboard — 194 total alerts for hik-vision agent">
+  <img src="research/screenshots/detectionrate.png" width="450" alt="Wazuh threat hunting dashboard — 194 total alerts for hik-vision agent">
 </p>
 
 <p align="center"><em>Wazuh Threat Hunting overview for the `hik-vision` agent: 194 total alerts, including 2 level-12-or-above critical alerts, 0 authentication failures against 49 authentication successes, and the top 10 alert groups evolving over time — including the custom `iot_attack` and `iot_attack_chain` rule groups.</em></p>
 
 <p align="center">
-  <img src="research/screenshots/cx-detection-rules.png" width="600" alt="Wazuh alert events — custom IoT rule descriptions and rule IDs">
+  <img src="research/screenshots/cx-detection-rules.png" width="450" alt="Wazuh alert events — custom IoT rule descriptions and rule IDs">
 </p>
 
 <p align="center"><em>Raw Wazuh alert events for the `hik-vision` agent, showing the custom ThreatForge detection rules firing in sequence — IoT device discovery (rule 100100), an unauthorized smart lock unlock with the correct PIN (rule 100120, level 12), and MQTT smart bulb manipulation (rule 100130) — interleaved with baseline PAM, sudo, and rootcheck telemetry.</em></p>
@@ -295,12 +295,6 @@ Raw and aggregated results for each experimental run are stored under [`reports/
 </p>
 
 <p align="center"><em>A completed CALDERA operation running the five-stage IoT attack chain against host `geeky`: smart device recon (reconnaissance), smart CCTV snap (collection), and smart bulb (impact) succeeded, smart unlock (impact) failed, and smart movement (lateral movement) succeeded — each row linked to its full command and output for auditability.</em></p>
-
-<p align="center">
-  <img src="research/screenshots/threatanalysis.png" width="600" alt="Wazuh endpoint summary for the hik-vision agent — system inventory and compliance">
-</p>
-
-<p align="center"><em>Wazuh endpoint summary for the `hik-vision` agent: system inventory, 24-hour events-count evolution, top MITRE ATT&CK tactics observed (Defense Evasion, Privilege Escalation, Initial Access, Persistence), and PCI DSS compliance mapping — generated automatically from a single ThreatForge operation run.</em></p>
 
 
 <p align="center">
