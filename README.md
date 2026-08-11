@@ -76,10 +76,10 @@ The result is a closed-loop research pipeline: launch an attack chain against si
 ## Architecture
 
 <p align="center">
-  <img src="research/screenshots/arch.png" width="420" alt="ThreatForge Single-Host Architecture — Five-Stage IoT Kill Chain">
+  <img src="research/architecture/6-stage-development-pipeline.svg" width="420" alt="ThreatForge Six - Stage developmental pipeline">
 </p>
 
-<p align="center"><em>Single-host, five-stage architecture: MITRE Caldera (Phase 0) tasks the custom Hikvision agent (Phase 1), which drives the HTTP, MQTT, and SSH executors (Phase 2) against the Node-RED testbed and services (Phase 3); resulting telemetry is baselined and ingested by the Wazuh agent (Phase 4) and surfaced through the Wazuh Indexer + Dashboard for execution, verification, and measurement (Phase 5).</em></p>
+<p align="center"><em>(Stage 1) Custom Agent Development: Develops a custom agent with five components: externalised environment configuration, a core controller for registration, beaconing and dispatch, and three protocol-specific executors for HTTP, MQTT and SSH. (Stage 2) Ability and Adversary Profile: Defines five discrete abilities, each mapped to an ATT&CK technique, and combines them into a Custom IoT Adversary profile representing reconnaissance, collection, impact and lateral movement. (Stage 3) IoT Testbed Design: Develops the Node-RED testbed around four endpoint handlers: device reconnaissance, camera snapshot, smart-lock control and smart-bulb messaging, following the dual-output design. (Stage 4) Detection Layer Design: Structures telemetry ingestion and detection rules so that each distinct telemetry outcome maps to a corresponding MITRE-tagged alert. (Stage 5) System Integration: Integrates the agent, adversary profile, testbed and detection layer so that every technique in the adversary profile has a traceable path to at least one corresponding detection rule. (Stage 6) Correlation Structure: Generates three logically independent data streams—adversary operation logs, testbed telemetry logs and SIEM alert logs—to support their correlation and subsequent analysis.</em></p>
 
 **Flow:** CALDERA orchestrates operations → the ThreatForge Agent executes abilities against the testbed over HTTP, MQTT, or SSH → Node-RED simulates smart-home device responses and emits IoT events → Wazuh ingests and analyzes the resulting telemetry for detection validation.
 
@@ -97,6 +97,15 @@ The result is a closed-loop research pipeline: launch an attack chain against si
 ---
 
 ## ThreatForge Agent
+
+
+<p align="center">
+  <img src="research/architecture/arch_diag.svg" width="420" alt="ThreatForge Single-Host Implementation Architecture — IoT Kill Chain">
+</p>
+
+
+<p align="center"><em>The design depicts a controlled cyber-battlefield where Wazuh creates the defensive monitoring and detection capacity prior to any attack, while the IoT testbed offers the target environment. Next, using five ATT&CK-mapped abilities arranged into a multi-stage attack profile, MITER CALDERA establishes the adversary's strategy and offensive capabilities. These capabilities are delivered via HTTP, MQTT, and SSH against the simulated IoT environment by the custom protocol-aware agent, which serves as the execution mechanism.
+It is possible to correlate the offensive and defensive activities throughout the framework since each activity generates observable telemetry and security alerts. The defensive effectiveness is then measured using the collected data in terms of detection coverage, precision, F1-score, mean time to detect (MTTD), and false positives per run.</em></p>
 
 The ThreatForge Agent is the framework's core technical contribution: a CALDERA-compatible agent that, unlike standard host-based agents, acts as a **protocol bridge** between CALDERA's tasking model and IoT device interfaces.
 
@@ -293,6 +302,10 @@ Raw and aggregated results for each experimental run are stored under [`reports/
 
 <p align="center"><em>Wazuh endpoint summary for the `hik-vision` agent: system inventory, 24-hour events-count evolution, top MITRE ATT&CK tactics observed (Defense Evasion, Privilege Escalation, Initial Access, Persistence), and PCI DSS compliance mapping — generated automatically from a single ThreatForge operation run.</em></p>
 
+
+<p align="center">
+  <img src="research/reports/results.svg" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+</p>
 ---
 
 ## Quick Start
