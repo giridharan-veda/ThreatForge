@@ -46,7 +46,7 @@ ThreatForge integrates:
 - **Docker Compose** — single-command, fully reproducible lab deployment
 
 <p align="center">
-  <img src="research/architecture/arch_diag.svg" width="786" alt="ThreatForge Single-Host Implementation Architecture — IoT Kill Chain">
+  <img src="research/screenshots/Fig_01_Overall_Framework_Architecture.png" width="786" alt="ThreatForge Single-Host Implementation Architecture — IoT Kill Chain">
 </p>
 
 The result is a closed-loop research pipeline: launch an attack chain against simulated smart-home devices, observe the resulting device and network telemetry, and measure precisely how well a given detection stack catches it — with results that are reproducible run-to-run and citable in academic work.
@@ -80,7 +80,7 @@ The result is a closed-loop research pipeline: launch an attack chain against si
 ## Architecture
 
 <p align="center">
-  <img src="research/architecture/6-stage-development-pipeline.svg" width="420" alt="ThreatForge Six - Stage developmental pipeline">
+  <img src="research/screenshots/Fig_02_Six_Stage_Development_Pipeline.png" width="420" alt="ThreatForge Six - Stage developmental pipeline">
 </p>
 
 **Flow:** CALDERA orchestrates operations → the ThreatForge Agent executes abilities against the testbed over HTTP, MQTT, or SSH → Node-RED simulates smart-home device responses and emits IoT events → Wazuh ingests and analyzes the resulting telemetry for detection validation.
@@ -291,7 +291,7 @@ Raw and aggregated results for each experimental run are stored under [`reports/
 
 
 <p align="center">
-  <img src="research/reports/results.svg" width="500" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+  <img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="500" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
 </p>
 ---
 
