@@ -80,7 +80,7 @@ The result is a closed-loop research pipeline: launch an attack chain against si
 ## Architecture
 
 <p align="center">
-  <img src="research/screenshots/Fig_02_Six_Stage_Development_Pipeline.png" width="420" alt="ThreatForge Six - Stage developmental pipeline">
+  <img src="research/screenshots/Fig_02_Six_Stage_Development_Pipeline.png" width="500" alt="ThreatForge Six - Stage developmental pipeline">
 </p>
 
 **Flow:** CALDERA orchestrates operations → the ThreatForge Agent executes abilities against the testbed over HTTP, MQTT, or SSH → Node-RED simulates smart-home device responses and emits IoT events → Wazuh ingests and analyzes the resulting telemetry for detection validation.
