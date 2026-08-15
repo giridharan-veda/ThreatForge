@@ -284,7 +284,7 @@ The accompanying [research paper](paper/) documents evaluation of ThreatForge ag
 Raw and aggregated results for each experimental run are stored under [`reports/`](reports/) and referenced by run ID in the paper, so findings can be independently reproduced from this repository alone.
 
 <p align="center">
-  <img src="research/screenshots/iot-5stage-attack-completed-caldera.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+  <img src="research/screenshots/Fig_08_Five_Stage_Kill_Chain_Execution.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
 </p>
 
 <p align="center"><em>A completed CALDERA operation running the five-stage IoT attack chain against host `geeky`: smart device recon (reconnaissance), smart CCTV snap (collection), and smart bulb (impact) succeeded, smart unlock (impact) failed, and smart movement (lateral movement) succeeded — each row linked to its full command and output for auditability.</em></p>
