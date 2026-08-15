@@ -319,7 +319,7 @@ These figures come from an **isolated Node-RED smart-home environment** and shou
    <img src="research/screenshots/Fig_07_CALDERA_Agent_Log_Integrity_Verification.png" width="440" alt="Custom IoT Adversary profile ability execution logs">
 </p>
 
-<p align="center"><em>Five-stage `Custom IoT Adversary` profile executing in CALDERA across reconnaissance, collection, impact, and lateral movement.</em></p>
+<p align="center"><em>Integrity verification using ThreatForge custom agent logs.</em></p>
 
 <p align="center">
   <img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="600" alt="ThreatForge detection performance summary across repeated validation runs">
