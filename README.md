@@ -56,7 +56,7 @@ Built for **red and purple teams, detection engineers, SOC analysts, IoT securit
 
 ## Key Results at a Glance
 
-Across 25 repeated laboratory runs of the five-technique Custom IoT Adversary profile, ThreatForge evaluated **125 technique instances** and achieved 94.4% detection coverage, 89.8% precision, and a 91.6% F1-score, with a mean time to detect of 59.0 s and 0.60 false positives per run. This demonstrates the framework's ability to execute repeatable ATT&CK-aligned IoT attack scenarios, generate observable telemetry, and validate corresponding security detections. **The table below defines the evaluation terms and summarizes the benchmark results.** See the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) for methodology, statistics, limitations, and detailed results. 
+Across 25 repeated runs, ThreatForge achieved 94.4% detection coverage, 89.8% precision, and a 91.6% F1-score, with a mean time to detect of 59.0 s and 0.60 false positives per run. This demonstrates the framework's ability to execute repeatable ATT&CK-aligned IoT attack scenarios, generate telemetry, and validate security detections. Refer [research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) for methodology, statistics, limitations, and detailed results. 
 
 <div align="center">
 
@@ -340,23 +340,22 @@ ThreatForge does not replace established emulation platforms. It adds an IoT-foc
 
 ---
 
-## Performance & Validation
+## Performance Validation
 
-ThreatForge has been evaluated across **25 laboratory runs** of the `Custom IoT Adversary`, covering **125 technique instances** with three synchronised telemetry sources and a **240-second validation window** per run.
+ThreatForge validates detection performance by correlating logs from the **adversary-execution**, **target-activity**, and **detection** layers using timestamps. This timestamp-based correlation provides the basis for classifying detection outcomes and computing the reported evaluation metrics across **25 laboratory runs and 125 technique instances**, using three synchronised telemetry sources and a **240-second validation window** per run. For methodology, statistical detail, confidence intervals, and limitations, see the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf).
+
+
+**CALDERA execution → target-side activity → Wazuh detection**
 
 <div align="center">
 
-| Metric | Result |
-|---|---:|
-| **Detection Coverage** | **94.4% ± 9.2%** |
-| **Precision** | **89.8% ± 10.4%** |
-| **F1-score** | **91.6% ± 7.5%** |
-| **Mean Time to Detect** | **59.0 ± 7.0 s** |
-| **False Positives / Run** | **0.60 ± 0.65** |
+| Evidence Layer | Source | Validation Role |
+|---|---|---|
+| **Attack Execution** | MITRE CALDERA | Records when the adversary ability was executed |
+| **Target Activity** | Node-RED JSON events / companion-host logs | Records when the expected IoT or host activity occurred |
+| **Detection Event** | Wazuh alerts | Records when the security detection was generated |
 
 </div>
-
-These figures come from an **isolated Node-RED smart-home environment** and should be read as controlled performance evidence, not a guarantee of production performance across every IoT deployment. For methodology, statistical detail, confidence intervals, and limitations, see the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf).
 
 <div align="center">
 
