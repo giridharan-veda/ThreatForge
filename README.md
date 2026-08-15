@@ -56,7 +56,7 @@ Built for **red and purple teams, detection engineers, SOC analysts, IoT securit
 
 ## Key Results at a Glance
 
-Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the performance shown above. Proven under controlled laboratory conditions. See the [full research paper](research/IOT-adversary-emulation-research-paper.pdf) for methodology, statistics, limitations, and detailed results.
+Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the performance shown above. Proven under controlled laboratory conditions. See the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) for methodology, statistics, limitations, and detailed results.
 
 | Metric | Benchmark result |
 |---|---:|
@@ -373,7 +373,7 @@ Full documentation lives under [`docs/`](docs/):
 | `usage-guide.md` | Running ThreatForge operations and validation workflows |
 | `README.md` | Documentation index |
 
-The [full research paper](research/IOT-adversary-emulation-research-paper.pdf) provides the technical detail, validation methodology, results, and limitations behind ThreatForge.
+The [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) provides the technical detail, validation methodology, results, and limitations behind ThreatForge.
 
 Additional figures, screenshots, and benchmark artefacts are available under [`research/`](research/).
 
