@@ -119,6 +119,13 @@ The ThreatForge Agent connects CALDERA tasking to IoT communication protocols, d
 - **Runtime substitution** — ability definitions can reference environment-specific values without hard-coding them
 - **Fault-tolerant execution** — failures are logged and handled without terminating the complete agent process
 
+
+<p align="center">
+  <img src="research/screenshots/Fig_03_Agent_Beaconing_PAW_ID.png" width="620" alt="Figure 3. ThreatForge Agent beaconing with the PAW ID">
+</p>
+
+<p align="center"><em>Five-stage `Custom IoT Adversary` profile executing in CALDERA across reconnaissance, collection, impact, and lateral movement.</em></p>
+
 ```
 agent/
 ├── core/
@@ -136,7 +143,7 @@ agent/
 The Node-RED testbed provides observable discovery, camera, smart-lock, and smart-bulb behaviours. SSH lateral movement is handled separately through companion-host telemetry.
 
 <p align="center">
-  <img src="research/screenshots/hikvision-testbed.png" width="480" alt="Node-RED smart-home testbed for discovery, camera, lock, and bulb interactions">
+  <img src="research/screenshots/Fig_05_Node_RED_IoT_Testbed.png" width="480" alt="Node-RED smart-home testbed for discovery, camera, lock, and bulb interactions">
 </p>
 
 <p align="center"><em>Node-RED smart-home testbed for device discovery, camera, smart-lock, and smart-bulb interactions; SSH activity is handled separately through the companion host.</em></p>
@@ -158,9 +165,9 @@ ThreatForge maps each evaluated action to an ATT&CK technique so security teams 
 > The five abilities are composed into the `Custom IoT Adversary` profile and can be executed in a fixed order for repeatable validation.
 
 <p align="center">
-  <img src="research/screenshots/cx-abilities-caldera.png" width="440" alt="ThreatForge IoT abilities registered in MITRE CALDERA">
+  <img src="research/screenshots/Fig_04_IoT_Specific_Custom_Abilities_CALDERA.png" width="440" alt="ThreatForge IoT abilities registered in MITRE CALDERA">
   &nbsp;&nbsp;
-  <img src="research/screenshots/agent-caldera.png" width="440" alt="Custom IoT Adversary profile configured in MITRE CALDERA">
+  <img src="research/screenshots/Fig_07_CALDERA_Agent_Log_Integrity_Verification.png" width="440" alt="Custom IoT Adversary profile ability execution logs">
 </p>
 
 <p align="center"><em>ThreatForge IoT abilities and the `Custom IoT Adversary` profile configured in CALDERA for repeatable execution.</em></p>
@@ -194,11 +201,11 @@ wazuh/
 
 <div align="center">
 
-<img src="research/screenshots/threatanalysis.png" width="31%" alt="Wazuh endpoint summary for the hik-vision agent showing system inventory and ATT&CK activity">
+<img src="research/screenshots/Fig_09_Hikvision_Agent_Endpoint_Summary.png" width="31%" alt="Wazuh endpoint summary for the hik-vision agent showing system inventory and ATT&CK activity">
 &nbsp;&nbsp;
-<img src="research/screenshots/detectionrate.png" width="31%" alt="Wazuh threat-hunting dashboard showing the ThreatForge alert timeline">
+<img src="research/screenshots/Fig_10_Threat_Hunting_Summary_Alert_Timeline.png" width="31%" alt="Wazuh threat-hunting dashboard showing the ThreatForge alert timeline">
 &nbsp;&nbsp;
-<img src="research/screenshots/cx-detection-rules.png" width="31%" alt="Wazuh alert stream showing ThreatForge detection rules for evaluated IoT behaviours">
+<img src="research/screenshots/Fig_06_Wazuh_Hikvision_Agent_Activity_Monitoring.png" width="31%" alt="Wazuh alert stream showing ThreatForge detection rules for evaluated IoT behaviours">
 
 </div>
 
