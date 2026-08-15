@@ -58,6 +58,8 @@ Built for **red and purple teams, detection engineers, SOC analysts, IoT securit
 
 Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the performance shown above. Proven under controlled laboratory conditions. See the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) for methodology, statistics, limitations, and detailed results.
 
+<div align="center">
+
 | Metric | Benchmark result |
 |---|---:|
 | **Detection Coverage** | **94.4% ± 9.2%** |
@@ -66,7 +68,11 @@ Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversa
 | **Mean Time to Detect (MTTD)** | **59.0 ± 7.0 s** |
 | **False Positives per Run** | **0.60 ± 0.65** |
 
+</div>
+
 ## Why ThreatForge
+
+<div align="center">
 
 | Security challenge | How ThreatForge addresses it |
 |---|---|
@@ -76,7 +82,11 @@ Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversa
 | Security teams need to know what their monitoring actually saw | Device/testbed telemetry and host-level logs provide target-side evidence alongside CALDERA execution records |
 | Testing real consumer devices can create operational and safety constraints | Node-RED provides a controlled smart-home environment without requiring physical IoT hardware |
 
+</div>
+
 ## Key Features
+
+<div align="center">
 
 | Category | Capability |
 |---|---|
@@ -89,6 +99,8 @@ Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversa
 | **Reproducibility** | Docker-supported deployment and repeatable attack execution in an isolated environment |
 | **Audience** | Purple teams, detection engineers, SOC analysts, IoT security teams, and researchers |
 
+</div>
+
 ## Architecture
 
 <p align="center">
@@ -99,6 +111,8 @@ Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversa
 
 ### Data Flow & Ports
 
+<div align="center">
+
 | Hop | Protocol / Port | Description |
 |---|---|---|
 | CALDERA → ThreatForge Agent | HTTPS `8888` (CALDERA API) | Operation tasking, ability retrieval, and result reporting |
@@ -107,6 +121,8 @@ Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversa
 | Agent → Companion Host (SSH) | SSH `22` | SSH-based lateral-movement activity captured through host-level logs |
 | Testbed / Host → Wazuh | Log / telemetry pipeline | Collection of device and host activity for detection and correlation |
 | Analyst → Wazuh Dashboard | HTTPS `443` | Alert review, detection tuning, and validation |
+
+</div>
 
 ---
 
@@ -154,6 +170,8 @@ The Node-RED testbed provides observable discovery, camera, smart-lock, and smar
 
 ThreatForge maps each evaluated action to an ATT&CK technique so security teams can move from **attack behaviour → expected telemetry → detection rule** without losing the operational context.
 
+<div align="center">
+
 | Tactic | Technique | ID | ThreatForge Implementation |
 |---|---|---|---|
 | Reconnaissance | Active Scanning | T1595 | Device/inventory discovery against the simulated smart-home environment |
@@ -161,6 +179,8 @@ ThreatForge maps each evaluated action to an ATT&CK technique so security teams 
 | Impact | Modify Parameter | T0836 | Smart-lock PIN interaction and lock-state manipulation |
 | Impact | Manipulation of Control (ICS) | T0831 | MQTT-based smart-bulb ON/OFF manipulation |
 | Lateral Movement | Remote Services: SSH | T1021.004 | SSH-based lateral movement against the companion host |
+
+</div>
 
 > The five abilities are composed into the `Custom IoT Adversary` profile and can be executed in a fixed order for repeatable validation.
 
@@ -183,6 +203,8 @@ ThreatForge makes detection validation a core security workflow. Wazuh receives 
 - **MITRE-mapped rules** — each rule corresponds to an expected outcome from the five-ability attack chain
 - **Rule-to-ability traceability** — alerts can be tied back to the exercised ATT&CK technique and target-side event
 
+<div align="center">
+
 | Ability | Rule ID | MITRE |
 |---|---:|---|
 | Device Discovery | 100100 | T1595 |
@@ -190,6 +212,8 @@ ThreatForge makes detection validation a core security workflow. Wazuh receives 
 | Smart Lock | 100120 | T0836 |
 | Smart Bulb | 100130 | T0831 |
 | Lateral Movement | 5715 / 5501 | T1021.004 |
+
+</div>
 
 The screenshot below shows the Wazuh alert stream associated with these rule identifiers, providing a direct operational view of the detection layer used by ThreatForge.
 
@@ -223,6 +247,8 @@ wazuh/
 
 ## System Requirements
 
+<div align="center">
+
 | Requirement | Minimum | Recommended |
 |---|---|---|
 | OS | Linux / macOS / Windows (WSL2) | Ubuntu 22.04 LTS |
@@ -232,6 +258,8 @@ wazuh/
 | Docker Engine | 24.x | Latest stable |
 | Docker Compose | v2 | v2 |
 | Python | 3.10 | 3.11+ |
+
+</div>
 
 ---
 
@@ -254,6 +282,8 @@ ThreatForge/
 
 ## Technology Stack
 
+<div align="center">
+
 | Component | Role |
 |---|---|
 | MITRE CALDERA | Adversary emulation and operation management |
@@ -264,6 +294,8 @@ ThreatForge/
 | SSH | Remote command execution |
 | Wazuh | Detection, monitoring, and alerting |
 | Docker | Reproducible environment deployment |
+
+</div>
 
 ---
 
@@ -285,6 +317,8 @@ Additional scenarios can be added by creating new CALDERA abilities and adversar
 
 ThreatForge complements established adversary-emulation platforms with protocol-aware IoT execution and integrated detection validation.
 
+<div align="center">
+
 | Evaluation Criterion | Atomic Red Team | MITRE CALDERA | Prelude Operator | Infection Monkey | **ThreatForge** |
 |---|---:|---:|---:|---:|---:|
 | ATT&CK-based emulation | ✓ | ✓ | ✓ | ◐ | ✓ |
@@ -292,6 +326,8 @@ ThreatForge complements established adversary-emulation platforms with protocol-
 | Integrated detection validation | ✗ | ✗ | ✗ | ✗ | ✓ |
 | Quantitative performance metrics | ✗ | ✗ | ✗ | ✗ | ✓ |
 | Reproducible, open-source release | ✓ | ✓ | ◐ | ✓ | ✓ |
+
+</div>
 
 **Legend:** ✓ Supported · ✗ Not supported · ◐ Partial support
 
@@ -303,6 +339,8 @@ ThreatForge does not replace established emulation platforms. It adds an IoT-foc
 
 ThreatForge has been exercised across **25 laboratory runs** of the `Custom IoT Adversary`, covering **125 technique instances** with three synchronised telemetry sources and a **240-second validation window** per run.
 
+<div align="center">
+
 | Metric | Result |
 |---|---:|
 | **Detection Coverage** | **94.4% ± 9.2%** |
@@ -311,19 +349,25 @@ ThreatForge has been exercised across **25 laboratory runs** of the `Custom IoT 
 | **Mean Time to Detect** | **59.0 ± 7.0 s** |
 | **False Positives / Run** | **0.60 ± 0.65** |
 
+</div>
+
 These figures come from an **isolated Node-RED smart-home environment** and should be read as controlled performance evidence, not a guarantee of production performance across every IoT deployment. For methodology, statistical detail, confidence intervals, and limitations, see the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf).
 
-<p align="center">
-   <img src="research/screenshots/Fig_07_CALDERA_Agent_Log_Integrity_Verification.png" width="440" alt="Custom IoT Adversary profile ability execution logs">
-</p>
+<div align="center">
 
-<p align="center"><em>Integrity verification using ThreatForge custom agent logs.</em></p>
+<img src="research/screenshots/Fig_07_CALDERA_Agent_Log_Integrity_Verification.png" width="48%" alt="ThreatForge Agent log integrity verification for the Custom IoT Adversary execution">
+&nbsp;&nbsp;
+<img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="48%" alt="ThreatForge detection performance summary across repeated validation runs">
 
-<p align="center">
-  <img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="440" alt="ThreatForge detection performance summary across repeated validation runs">
-</p>
+</div>
 
-<p align="center"><em>Detection performance summary across 25 validation runs.</em></p>
+<div align="center">
+
+<em>ThreatForge Agent log integrity verification for the Custom IoT Adversary execution.</em>
+&nbsp;&nbsp;&nbsp;
+<em>Detection performance summary across 25 validation runs.</em>
+
+</div>
 
 ---
 
@@ -367,11 +411,15 @@ Use [`docs/usage-guide.md`](docs/usage-guide.md) for the validation workflow and
 
 Full documentation lives under [`docs/`](docs/):
 
+<div align="center">
+
 | Document | Description |
 |---|---|
 | `setup-guide.md` | Installation and environment configuration |
 | `usage-guide.md` | Running ThreatForge operations and validation workflows |
 | `README.md` | Documentation index |
+
+</div>
 
 The [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) provides the technical detail, validation methodology, results, and limitations behind ThreatForge.
 
