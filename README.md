@@ -56,6 +56,8 @@ Built for **red and purple teams, detection engineers, SOC analysts, IoT securit
 
 ## Key Results at a Glance
 
+Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the performance shown above. Proven under controlled laboratory conditions. See the [full research paper](research/IOT-adversary-emulation-research-paper.pdf) for methodology, statistics, limitations, and detailed results.
+
 | Metric | Benchmark result |
 |---|---:|
 | **Detection Coverage** | **94.4% ± 9.2%** |
@@ -63,8 +65,6 @@ Built for **red and purple teams, detection engineers, SOC analysts, IoT securit
 | **F1-score** | **91.6% ± 7.5%** |
 | **Mean Time to Detect (MTTD)** | **59.0 ± 7.0 s** |
 | **False Positives per Run** | **0.60 ± 0.65** |
-
-Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the performance shown above. Proven under controlled laboratory conditions. See the [full research paper](research/IOT-adversary-emulation-research-paper.pdf) for methodology, statistics, limitations, and detailed results.
 
 ## Why ThreatForge
 
