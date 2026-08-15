@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="research/screenshots/threatforge-cover.svg" width="100%" alt="ThreatForge — IoT Adversary Emulation Framework, five-stage kill chain: Recon, Exploit, C2, Collect, Impact">
+<img src="research/screenshots/threatforge-cover.svg" width="100%" alt="ThreatForge — ATT&CK-aligned IoT adversary emulation and closed-loop detection validation platform">
 
 # ThreatForge
 
-**An IoT Adversary Emulation Framework for Smart Home Cybersecurity Research**
+**An IoT Adversary Emulation and Detection Validation Platform for Smart-Home Security**
 
-Reproducible, ATT&CK-aligned adversary emulation for smart-home IoT environments — built on **MITRE CALDERA**, **Node-RED**, and **Wazuh**.
+Safely execute ATT&CK-aligned IoT attack chains, generate realistic device telemetry, and validate whether your security monitoring detects what matters — built on **MITRE CALDERA**, **Node-RED**, and **Wazuh**.
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
@@ -17,13 +17,14 @@ Reproducible, ATT&CK-aligned adversary emulation for smart-home IoT environments
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
 [Overview](#overview) •
+[Key Results](#key-results-at-a-glance) •
 [Why ThreatForge](#why-threatforge) •
 [Architecture](#architecture) •
 [ThreatForge Agent](#threatforge-agent) •
 [ATT&CK Coverage](#attck-technique-coverage) •
 [Detection Engineering](#detection-engineering) •
 [Quick Start](#quick-start) •
-[Evaluation](#evaluation--research-results) •
+[Performance](#performance--validation) •
 [Documentation](#documentation) •
 [Roadmap](#roadmap)
 
@@ -33,166 +34,183 @@ Reproducible, ATT&CK-aligned adversary emulation for smart-home IoT environments
 
 ## Overview
 
-Most adversary emulation platforms — CALDERA, Atomic Red Team, Metta — target enterprise Windows and Linux infrastructure. There is no equivalent, reproducible standard for **consumer IoT and smart-home environments**, despite IoT devices being one of the fastest-growing and least-instrumented attack surfaces in the field.
+IoT devices increasingly sit inside the same environments that security teams already monitor: cameras, locks, bulbs, hubs, gateways, and companion hosts. Traditional adversary-emulation tooling is largely built around enterprise endpoints, while IoT security testing often remains device-specific, difficult to reproduce, and disconnected from the detection stack.
 
-**ThreatForge** closes that gap. It extends MITRE CALDERA's emulation engine with a purpose-built agent, protocol handlers, and a simulated smart-home testbed, so that researchers can run reproducible, ATT&CK-aligned attack chains against IoT devices and measure detection coverage end-to-end — from adversary action, to device-level effect, to SIEM alert.
+**ThreatForge** turns that gap into an actionable security workflow. It extends MITRE CALDERA with a protocol-aware IoT agent, connects it to a controlled Node-RED smart-home environment, and uses Wazuh to validate the resulting telemetry and detections. Security teams can execute a known attack path, observe what the environment actually records, and verify whether the monitoring pipeline catches it.
 
 ThreatForge integrates:
 
-- **MITRE CALDERA** — adversary emulation engine, operation orchestration, and C2
-- **ThreatForge Agent** — a custom CALDERA agent that speaks MQTT, HTTP, and SSH natively to IoT devices
-- **Node-RED** — smart-home device and protocol simulation (cameras, locks, sensors, hubs)
-- **Wazuh** — detection engineering, log ingestion, correlation, and alerting
-- **Docker Compose** — single-command, fully reproducible lab deployment
+- **MITRE CALDERA** — ATT&CK-aligned adversary emulation and operation orchestration
+- **ThreatForge Agent** — a CALDERA-compatible agent with native HTTP, MQTT, and SSH executors
+- **Node-RED** — controlled smart-home simulation for device discovery, camera, lock, and bulb interactions
+- **Wazuh** — telemetry collection, MITRE-mapped detection rules, alerting, and validation
+- **Docker** — reproducible deployment for an isolated security-testing environment
 
 <p align="center">
-  <img src="research/screenshots/Fig_01_Overall_Framework_Architecture.png" width="786" alt="ThreatForge Single-Host Implementation Architecture — IoT Kill Chain">
+  <img src="research/screenshots/Fig_01_Overall_Framework_Architecture.png" width="786" alt="ThreatForge closed-loop architecture: CALDERA, ThreatForge Agent, Node-RED, and Wazuh">
 </p>
 
-The result is a closed-loop research pipeline: launch an attack chain against simulated smart-home devices, observe the resulting device and network telemetry, and measure precisely how well a given detection stack catches it — with results that are reproducible run-to-run and citable in academic work.
+ThreatForge is built for teams that need evidence, not assumptions: **execute the attack, verify the target-side activity, and confirm the alert**. This creates a direct execution-to-telemetry-to-detection workflow for IoT security validation.
+
+Built for **red and purple teams, detection engineers, SOC analysts, IoT security programmes, and security researchers** that need a safe environment for measurable testing.
+
+## Key Results at a Glance
+
+| Metric | Benchmark result |
+|---|---:|
+| **Detection Coverage** | **94.4% ± 9.2%** |
+| **Precision** | **89.8% ± 10.4%** |
+| **F1-score** | **91.6% ± 7.5%** |
+| **Mean Time to Detect (MTTD)** | **59.0 ± 7.0 s** |
+| **False Positives per Run** | **0.60 ± 0.65** |
+
+Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the performance shown above. Proven under controlled laboratory conditions. See the [full research paper](research/IOT-adversary-emulation-research-paper.pdf) for methodology, statistics, limitations, and detailed results.
 
 ## Why ThreatForge
 
-| Problem in existing tooling | How ThreatForge addresses it |
+| Security challenge | How ThreatForge addresses it |
 |---|---|
-| Emulation frameworks assume Windows/Linux endpoints and EDR telemetry | ThreatForge Agent is protocol-native (MQTT/HTTP/SSH) instead of host-agent-based, matching how real IoT devices are actually reached |
-| IoT security research is hard to reproduce across papers/labs | Fully declarative, Docker Compose-based lab; identical topology every run |
-| No standard mapping of IoT attacker behavior to ATT&CK | Every ability ships with an explicit ATT&CK technique ID (see [coverage table](#attck-technique-coverage)) |
-| Detection validation is usually manual and ad hoc | Wazuh rules and decoders are versioned in-repo and tied 1:1 to abilities, so detection efficacy is measurable, not anecdotal |
-| Hard to safely demo IoT attacks for training/education | Node-RED testbed simulates device behavior — no physical hardware or real network exposure required |
-
----
+| IoT attacks are difficult to emulate with conventional endpoint-focused tooling | Protocol-aware HTTP, MQTT, and SSH execution is built into the ThreatForge Agent |
+| Attack execution and detection validation are often separate activities | ThreatForge connects execution, telemetry, and SIEM alerting in one closed-loop workflow |
+| Detection effectiveness is difficult to demonstrate consistently | ATT&CK-mapped abilities can be executed repeatedly in the same controlled environment |
+| Security teams need to know what their monitoring actually saw | Device/testbed telemetry and host-level logs provide target-side evidence alongside CALDERA execution records |
+| Testing real consumer devices can create operational and safety constraints | Node-RED provides a controlled smart-home environment without requiring physical IoT hardware |
 
 ## Key Features
 
 | Category | Capability |
 |---|---|
-| **Emulation** | IoT-focused adversary emulation via a custom MITRE CALDERA agent |
-| **Coverage** | ATT&CK-aligned adversary profiles and modular CALDERA abilities |
-| **Simulation** | Realistic smart-home IoT testbed powered by Node-RED |
-| **Protocols** | Native support for MQTT, HTTP, and SSH attack execution |
-| **Detection** | Wazuh-based detection engineering and rule validation |
-| **Automation** | Fully automated, repeatable attack-chain execution |
-| **Reproducibility** | Docker-based deployment for consistent research environments |
-
----
+| **Emulation** | IoT-focused adversary emulation through a custom MITRE CALDERA-compatible agent |
+| **ATT&CK Alignment** | Five evaluated abilities mapped to MITRE ATT&CK and ATT&CK for ICS techniques |
+| **Protocol Support** | Native HTTP, MQTT, and SSH execution |
+| **Simulation** | Controlled Node-RED smart-home environment representing camera, lock, bulb, and device-discovery behaviour |
+| **Detection** | Wazuh-based detection engineering with MITRE-mapped rules |
+| **Closed-Loop Validation** | Correlates adversary execution, target-side telemetry, and SIEM alerts |
+| **Reproducibility** | Docker-supported deployment and repeatable attack execution in an isolated environment |
+| **Audience** | Purple teams, detection engineers, SOC analysts, IoT security teams, and researchers |
 
 ## Architecture
 
 <p align="center">
-  <img src="research/screenshots/Fig_02_Six_Stage_Development_Pipeline.png" width="600" alt="ThreatForge Six - Stage developmental pipeline">
+  <img src="research/screenshots/Fig_02_Six_Stage_Development_Pipeline.png" width="600" alt="ThreatForge six-stage workflow from agent design to telemetry correlation">
 </p>
 
-**Flow:** CALDERA orchestrates operations → the ThreatForge Agent executes abilities against the testbed over HTTP, MQTT, or SSH → Node-RED simulates smart-home device responses and emits IoT events → Wazuh ingests and analyzes the resulting telemetry for detection validation.
+**Flow:** CALDERA orchestrates the `Custom IoT Adversary` profile → the ThreatForge Agent dispatches protocol-specific actions over HTTP, MQTT, or SSH → the Node-RED testbed or companion host generates observable activity → Wazuh collects and evaluates the telemetry → execution, telemetry, and alert records are correlated for validation.
 
 ### Data Flow & Ports
 
 | Hop | Protocol / Port | Description |
 |---|---|---|
-| CALDERA → ThreatForge Agent | HTTPS `8888` (CALDERA API) | Operation tasking, ability retrieval, result reporting (beacon-style) |
-| Agent → IoT Testbed (HTTP) | HTTP `1880` (Node-RED) | Device state queries, snapshot retrieval, REST-style device control |
-| Agent → IoT Testbed (MQTT) | MQTT `1883` | Topic-based command injection and telemetry subscription |
-| Agent → IoT Testbed (SSH) | SSH `22` | Remote command execution against emulated embedded-Linux devices |
-| Node-RED → Wazuh | Syslog / Filebeat `514` / `5044` | IoT event and log forwarding into the detection pipeline |
-| Analyst → Wazuh Dashboard | HTTPS `443` | Alert triage, rule tuning, and detection validation |
+| CALDERA → ThreatForge Agent | HTTPS `8888` (CALDERA API) | Operation tasking, ability retrieval, and result reporting |
+| Agent → IoT Testbed (HTTP) | HTTP `1880` (Node-RED) | Device state queries, snapshot retrieval, and REST-style device control |
+| Agent → IoT Testbed (MQTT) | MQTT `1883` | Topic-based command delivery and telemetry generation |
+| Agent → Companion Host (SSH) | SSH `22` | SSH-based lateral-movement activity captured through host-level logs |
+| Testbed / Host → Wazuh | Log / telemetry pipeline | Collection of device and host activity for detection and correlation |
+| Analyst → Wazuh Dashboard | HTTPS `443` | Alert review, detection tuning, and validation |
 
 ---
 
 ## ThreatForge Agent
-The ThreatForge Agent is the framework's core technical contribution: a CALDERA-compatible agent that, unlike standard host-based agents, acts as a **protocol bridge** between CALDERA's tasking model and IoT device interfaces.
+The ThreatForge Agent connects CALDERA tasking to IoT communication protocols, dispatching actions through dedicated HTTP, MQTT, and SSH executors.
 
-- **Beacon-based tasking** — polls CALDERA over HTTPS for queued abilities, consistent with CALDERA's native agent contract
-- **Multi-protocol executors** — dispatches each ability through the correct handler (`http_executor`, `mqtt_executor`, `ssh_executor`) based on ability metadata
-- **Fact-driven targeting** — consumes CALDERA facts (device IP, MQTT topic, credentials) so abilities generalize across multiple simulated devices rather than being hardcoded
-- **Structured result reporting** — returns execution status, stdout/stderr, and timing data back to CALDERA for operation-level scoring
-- **Extensible executor interface** — new protocols (e.g., CoAP, BLE) can be added by implementing a single executor class
+- **Beacon-based tasking** — follows CALDERA's communication model for receiving and reporting operations
+- **Protocol-specific execution** — routes actions to dedicated HTTP, MQTT, or SSH executors
+- **Externalised configuration** — runtime parameters are kept separate from execution logic
+- **Runtime substitution** — ability definitions can reference environment-specific values without hard-coding them
+- **Fault-tolerant execution** — failures are logged and handled without terminating the complete agent process
 
 ```
 agent/
 ├── core/
 │   ├── beacon.py          # CALDERA check-in and tasking loop
-│   ├── executor_base.py   # Abstract executor interface
-│   └── fact_resolver.py   # Resolves CALDERA facts into device targets
+│   ├── executor_base.py   # Protocol executor interface
+│   └── fact_resolver.py   # Resolves environment-specific targets/facts
 ├── executors/
 │   ├── http_executor.py
 │   ├── mqtt_executor.py
 │   └── ssh_executor.py
 └── config/
-    └── agent.yml          # Agent identity, C2 endpoint, protocol credentials
+    └── agent.yml          # Agent identity, C2 endpoint, and runtime configuration
 ```
 
-The Node-RED testbed that the agent drives is wired as a set of function-node handlers, one per attack primitive, each logging its result to a shared events log:
+The Node-RED testbed provides observable discovery, camera, smart-lock, and smart-bulb behaviours. SSH lateral movement is handled separately through companion-host telemetry.
 
 <p align="center">
-  <img src="research/screenshots/hikvision-testbed.png" width="480" alt="Node-RED IoT testbed flow — Recon, Snapshot, Lock, and Bulb handlers">
+  <img src="research/screenshots/hikvision-testbed.png" width="480" alt="Node-RED smart-home testbed for discovery, camera, lock, and bulb interactions">
 </p>
 
-<p align="center"><em>Node-RED flow for the smart-home testbed: Device Recon, Camera Snapshot, and Smart Lock Unlock inputs are routed through dedicated handler function nodes, each returning an HTTP 200 and writing to the Events Log; the MQTT-driven Bulb Command follows the same pattern. Lateral movement is handled out-of-band via SSH, as noted on the canvas.</em></p>
+<p align="center"><em>Node-RED smart-home testbed for device discovery, camera, smart-lock, and smart-bulb interactions; SSH activity is handled separately through the companion host.</em></p>
 
 ---
 
 ## ATT&CK Technique Coverage
 
-Every ability in `abilities/` is explicitly tagged with a MITRE ATT&CK technique ID, so operations produce a measurable, citable coverage map rather than an anecdotal attack narrative.
+ThreatForge maps each evaluated action to an ATT&CK technique so security teams can move from **attack behaviour → expected telemetry → detection rule** without losing the operational context.
 
 | Tactic | Technique | ID | ThreatForge Implementation |
 |---|---|---|---|
-| Reconnaissance | Active Scanning | T1595 | Network and mDNS-based smart-home device discovery |
-| Initial Access | Exploit Public-Facing Application | T1190 | Simulated device web/API exploitation via HTTP executor |
-| Execution | Command and Scripting Interpreter | T1059 | Remote command execution over the SSH executor |
-| Persistence | Valid Accounts | T1078 | Reuse of default/weak device credentials |
-| Collection | Data from Local System | T1005 | Camera snapshot and media collection from simulated devices |
-| Command and Control | Application Layer Protocol | T1071.001 | MQTT-based command channel to compromised devices |
-| Impact | Service Stop / Manipulation | T1489 | Smart lock state manipulation (lock/unlock abuse) |
+| Reconnaissance | Active Scanning | T1595 | Device/inventory discovery against the simulated smart-home environment |
+| Collection | Video Capture | T1125 | Camera snapshot retrieval from the simulated device interface |
+| Impact | Modify Parameter | T0836 | Smart-lock PIN interaction and lock-state manipulation |
+| Impact | Manipulation of Control (ICS) | T0831 | MQTT-based smart-bulb ON/OFF manipulation |
+| Lateral Movement | Remote Services: SSH | T1021.004 | SSH-based lateral movement against the companion host |
 
-> Full technique-to-ability mapping is maintained in [`abilities/`](abilities/) and cross-referenced in the [research paper](paper/).
-
-These abilities are defined and managed directly in CALDERA, tagged by tactic and ATT&CK technique ID, and grouped under a dedicated `iot-adversary` profile for repeatable operations:
+> The five abilities are composed into the `Custom IoT Adversary` profile and can be executed in a fixed order for repeatable validation.
 
 <p align="center">
-  <img src="research/screenshots/cx-abilities-caldera.png" width="440" alt="CALDERA abilities — smart device recon, smart unlock, smart bulb, smart movement">
+  <img src="research/screenshots/cx-abilities-caldera.png" width="440" alt="ThreatForge IoT abilities registered in MITRE CALDERA">
   &nbsp;&nbsp;
-  <img src="research/screenshots/agent-caldera.png" width="440" alt="CALDERA adversary profile — iot-adversary">
+  <img src="research/screenshots/agent-caldera.png" width="440" alt="Custom IoT Adversary profile configured in MITRE CALDERA">
 </p>
 
-<p align="center"><em>Left: the ThreatForge abilities registered in CALDERA — smart device recon (T1595.003), smart unlock (T0836), smart bulb (T0813), and smart movement (T1021.004) — filtered by the "smart" search tag. Right: the `iot-adversary` profile shell in CALDERA's Adversaries view, into which these abilities are assembled for a repeatable operation.</em></p>
+<p align="center"><em>ThreatForge IoT abilities and the `Custom IoT Adversary` profile configured in CALDERA for repeatable execution.</em></p>
 
 ---
 
 ## Detection Engineering
 
-Wazuh integration is treated as a first-class research artifact, not an afterthought — each attack ability has a corresponding, versioned detection rule so that **detection efficacy can be measured, not assumed**.
+ThreatForge makes detection validation a core security workflow. Wazuh receives the resulting telemetry and applies MITRE-mapped rules so teams can verify whether exercised behaviour is actually visible to their monitoring stack.
 
-- **Custom decoders** parse Node-RED and MQTT broker logs into structured fields Wazuh can correlate on
-- **Custom rule sets**, grouped by tactic, alert on the specific IoT behaviors each ability produces (e.g., anomalous MQTT publish rates, unauthorized lock-state changes, repeated snapshot requests)
-- **Rule-to-ability traceability** — every rule ID in [`wazuh/`](wazuh/) references the ability ID that should trigger it, enabling precise true-positive/false-negative analysis per run
-- **Dashboards** provide operation-level views: techniques executed vs. techniques detected, mean time-to-alert, and per-device alert volume
+- **Structured telemetry** — Node-RED events are collected as JSON; SSH activity is observed through host logs
+- **Native Wazuh decoding** — uses Wazuh's native JSON decoder
+- **MITRE-mapped rules** — each rule corresponds to an expected outcome from the five-ability attack chain
+- **Rule-to-ability traceability** — alerts can be tied back to the exercised ATT&CK technique and target-side event
+
+| Ability | Rule ID | MITRE |
+|---|---:|---|
+| Device Discovery | 100100 | T1595 |
+| Camera Snapshot | 100110 | T1125 |
+| Smart Lock | 100120 | T0836 |
+| Smart Bulb | 100130 | T0831 |
+| Lateral Movement | 5715 / 5501 | T1021.004 |
+
+The screenshot below shows the Wazuh alert stream associated with these rule identifiers, providing a direct operational view of the detection layer used by ThreatForge.
 
 ```
 wazuh/
-├── decoders/        Custom log decoders (Node-RED, MQTT broker, SSH)
-├── rules/           Detection rules, grouped by ATT&CK tactic
-└── dashboards/       Wazuh dashboard exports for operation-level reporting
+├── rules/           Detection rules and MITRE mappings
+└── dashboards/      Wazuh dashboard exports and visual validation assets
 ```
 
+<div align="center">
 
-<p align="center">
-  <img src="research/screenshots/threatanalysis.png" width="600" alt="Wazuh endpoint summary for the hik-vision agent — system inventory and compliance">
-</p>
+<img src="research/screenshots/threatanalysis.png" width="31%" alt="Wazuh endpoint summary for the hik-vision agent showing system inventory and ATT&CK activity">
+&nbsp;&nbsp;
+<img src="research/screenshots/detectionrate.png" width="31%" alt="Wazuh threat-hunting dashboard showing the ThreatForge alert timeline">
+&nbsp;&nbsp;
+<img src="research/screenshots/cx-detection-rules.png" width="31%" alt="Wazuh alert stream showing ThreatForge detection rules for evaluated IoT behaviours">
 
-<p align="center"><em>Wazuh endpoint summary for the `hik-vision` agent: system inventory, 24-hour events-count evolution, top MITRE ATT&CK tactics observed (Defense Evasion, Privilege Escalation, Initial Access, Persistence), and PCI DSS compliance mapping — generated automatically from a single ThreatForge operation run.</em></p>
+</div>
 
-<p align="center">
-  <img src="research/screenshots/detectionrate.png" width="600" alt="Wazuh threat hunting dashboard — 194 total alerts for hik-vision agent">
-</p>
+<div align="center">
 
-<p align="center"><em>Wazuh Threat Hunting overview for the `hik-vision` agent: 194 total alerts, including 2 level-12-or-above critical alerts, 0 authentication failures against 49 authentication successes, and the top 10 alert groups evolving over time — including the custom `iot_attack` and `iot_attack_chain` rule groups.</em></p>
+<em>Wazuh endpoint summary showing system inventory and observed ATT&CK activity.</em>
+&nbsp;&nbsp;&nbsp;
+<em>Wazuh threat-hunting summary and alert timeline for a validation run.</em>
+&nbsp;&nbsp;&nbsp;
+<em>Wazuh alert events showing the detection rules for the evaluated IoT behaviours.</em>
 
-<p align="center">
-  <img src="research/screenshots/cx-detection-rules.png" width="600" alt="Wazuh alert events — custom IoT rule descriptions and rule IDs">
-</p>
-
-<p align="center"><em>Raw Wazuh alert events for the `hik-vision` agent, showing the custom ThreatForge detection rules firing in sequence — IoT device discovery (rule 100100), an unauthorized smart lock unlock with the correct PIN (rule 100120, level 12), and MQTT smart bulb manipulation (rule 100130) — interleaved with baseline PAM, sudo, and rootcheck telemetry.</em></p>
+</div>
 
 ---
 
@@ -214,16 +232,15 @@ wazuh/
 
 ```
 ThreatForge/
-├── paper/          Research paper (architecture, methodology, evaluation)
-├── docs/            Documentation (setup, usage, reference)
+├── research/       Research paper, figures, screenshots, and benchmark artefacts
+├── docs/            Documentation (setup and usage)
 ├── agent/           ThreatForge Agent source
 ├── abilities/       MITRE CALDERA abilities
-├── adversary/        Adversary profiles
-├── testbed/          Node-RED smart-home IoT simulation
-├── wazuh/            Detection rules and configuration
-├── docker/           Docker & container configuration
-├── scripts/          Setup and helper scripts
-└── reports/          Experimental results
+├── adversary/       Adversary profiles
+├── testbed/         Node-RED smart-home IoT simulation
+├── wazuh/           Detection rules and configuration
+├── docker/          Docker deployment configuration
+└── scripts/         Supporting utilities
 ```
 
 ---
@@ -259,81 +276,84 @@ Additional scenarios can be added by creating new CALDERA abilities and adversar
 
 ## How ThreatForge Compares
 
-| Capability | Vanilla CALDERA | Atomic Red Team | IoT honeypots (e.g. IoTPOT) | **ThreatForge** |
-|---|---|---|---|---|
-| ATT&CK-aligned operations | ✅ | ✅ | ❌ | ✅ |
-| IoT-native protocol execution (MQTT/HTTP/SSH to devices) | ❌ | ❌ | Partial | ✅ |
-| Reproducible, containerized smart-home testbed | ❌ | ❌ | ❌ | ✅ |
-| Detection-rule-to-technique traceability | ❌ | ❌ | ❌ | ✅ |
-| Designed for passive attacker observation | ❌ | ❌ | ✅ | ❌ (active emulation, not a honeypot) |
-| Purpose-built for smart-home research | ❌ | ❌ | Partial | ✅ |
+ThreatForge complements established adversary-emulation platforms with protocol-aware IoT execution and integrated detection validation.
 
-ThreatForge is not a replacement for CALDERA — it **is** CALDERA, extended with the agent, protocol layer, and testbed needed to bring the same emulation discipline to IoT.
+| Evaluation Criterion | Atomic Red Team | MITRE CALDERA | Prelude Operator | Infection Monkey | **ThreatForge** |
+|---|---:|---:|---:|---:|---:|
+| ATT&CK-based emulation | ✓ | ✓ | ✓ | ◐ | ✓ |
+| Native IoT protocol support | ✗ | ✗ | ✗ | ✗ | ✓ |
+| Integrated detection validation | ✗ | ✗ | ✗ | ✗ | ✓ |
+| Quantitative performance metrics | ✗ | ✗ | ✗ | ✗ | ✓ |
+| Reproducible, open-source release | ✓ | ✓ | ◐ | ✓ | ✓ |
+
+**Legend:** ✓ Supported · ✗ Not supported · ◐ Partial support
+
+ThreatForge does not replace established emulation platforms. It adds an IoT-focused workflow for protocol-aware execution, detection validation, and measurable security outcomes.
 
 ---
 
-## Evaluation & Research Results
+## Performance & Validation
 
-The accompanying [research paper](paper/) documents evaluation of ThreatForge against the full attack-chain catalog in [`abilities/`](abilities/), including:
+ThreatForge has been exercised across **25 laboratory runs** of the `Custom IoT Adversary`, covering **125 technique instances** with three synchronised telemetry sources and a **240-second validation window** per run.
 
-- **Detection coverage** — proportion of executed ATT&CK techniques generating a corresponding Wazuh alert
-- **Mean time-to-alert** — latency between ability execution and detection, per tactic
-- **False-negative analysis** — techniques executed without a matching alert, used to drive new Wazuh rule development
-- **Cross-run reproducibility** — variance in results across repeated operations on an identical Docker topology
+| Metric | Result |
+|---|---:|
+| **Detection Coverage** | **94.4% ± 9.2%** |
+| **Precision** | **89.8% ± 10.4%** |
+| **F1-score** | **91.6% ± 7.5%** |
+| **Mean Time to Detect** | **59.0 ± 7.0 s** |
+| **False Positives / Run** | **0.60 ± 0.65** |
 
-Raw and aggregated results for each experimental run are stored under [`reports/`](reports/) and referenced by run ID in the paper, so findings can be independently reproduced from this repository alone.
+These figures come from an **isolated Node-RED smart-home environment** and should be read as controlled performance evidence, not a guarantee of production performance across every IoT deployment. For methodology, statistical detail, confidence intervals, and limitations, see the [full research paper](research/IOT-adversary-emulation-research-paper.pdf).
 
 <p align="center">
   <img src="research/screenshots/Fig_08_Five_Stage_Kill_Chain_Execution.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
 </p>
 
-<p align="center"><em>A completed CALDERA operation running the five-stage IoT attack chain against host `geeky`: smart device recon (reconnaissance), smart CCTV snap (collection), and smart bulb (impact) succeeded, smart unlock (impact) failed, and smart movement (lateral movement) succeeded — each row linked to its full command and output for auditability.</em></p>
+<p align="center"><em>Five-stage `Custom IoT Adversary` profile executing in CALDERA across reconnaissance, collection, impact, and lateral movement.</em></p>
 
 
 <p align="center">
-  <img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="600" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+  <img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="600" alt="ThreatForge detection performance summary across repeated validation runs">
 </p>
+
+<p align="center"><em>Detection performance summary across 25 validation runs.</em></p>
+
 ---
 
 ## Quick Start
 
-**1. Clone the repository**
+Bring up the isolated lab, complete the one-time configuration, then run `Custom IoT Adversary` from CALDERA.
+
+**1. Clone**
 
 ```bash
 git clone https://github.com/giridharan-veda/ThreatForge.git
 cd ThreatForge
 ```
 
-**2. Install dependencies**
+**2. Start the lab services**
 
 ```bash
-pip install -r requirements.txt
+docker compose -f docker/caldera/docker-compose.yml up -d
+docker compose -f docker/wazuh/docker-compose.yml up -d
 ```
 
-**3. Run the setup script**
+**3. Complete the one-time configuration**
 
-```bash
-chmod +x scripts/setup.sh
-./scripts/setup.sh
-```
+Follow [`docs/setup-guide.md`](docs/setup-guide.md) to configure the Node-RED flow, ThreatForge Agent, and CALDERA/Wazuh integration.
 
-**4. Launch the lab**
+**4. Run the attack chain**
 
-```bash
-docker compose up -d
-```
+Launch the `Custom IoT Adversary` profile in CALDERA. Review the resulting activity in Node-RED and Wazuh.
 
-**5. Open the consoles**
+**Success looks like this:**
 
-| Service | Purpose |
-|---|---|
-| MITRE CALDERA | Operation control and adversary management |
-| Node-RED | IoT testbed visualization |
-| Wazuh Dashboard | Detection monitoring and alerting |
+- CALDERA completes the five-ability operation
+- target-side activity appears in Node-RED or the companion host logs
+- Wazuh produces the corresponding MITRE-mapped detections
 
-**6. Run an operation**
-
-Execute the Hikvision adversary profile and monitor detections in real time via the Wazuh dashboard.
+Use [`docs/usage-guide.md`](docs/usage-guide.md) for the validation workflow and result review. Run ThreatForge only in an isolated, authorised test environment.
 
 ---
 
@@ -343,38 +363,40 @@ Full documentation lives under [`docs/`](docs/):
 
 | Document | Description |
 |---|---|
-| `setup-guide.md` | Full installation and configuration guide |
-| `usage-guide.md` | Running operations with ThreatForge |
+| `setup-guide.md` | Installation and environment configuration |
+| `usage-guide.md` | Running ThreatForge operations and validation workflows |
 | `README.md` | Documentation index |
 
-The complete research paper — covering architecture, implementation, methodology, and evaluation — is available under [`paper/`](paper/).
+The [full research paper](research/IOT-adversary-emulation-research-paper.pdf) provides the technical detail, validation methodology, results, and limitations behind ThreatForge.
+
+Additional figures, screenshots, and benchmark artefacts are available under [`research/`](research/).
 
 ---
 
 ## Project Objectives
 
-- Extend adversary emulation into IoT environments
-- Improve defensive visibility for smart-home ecosystems
-- Validate Wazuh detection capabilities against realistic attack chains
-- Map IoT attack behavior to MITRE ATT&CK
-- Support reproducible, citable cybersecurity research
-- Facilitate purple-team exercises
+- Enable safe adversary emulation for smart-home IoT environments
+- Validate defensive visibility instead of relying on execution status alone
+- Map IoT attack behaviour to MITRE ATT&CK and ATT&CK for ICS techniques
+- Support repeatable purple-team and detection-engineering workflows
+- Provide quantitative evidence for detection coverage and responsiveness
+- Give researchers and security teams a controlled environment for IoT security testing
 
 ## Intended Audience
 
-Cybersecurity researchers · SOC analysts · detection engineers · blue & purple teams · academic institutions · security students · IoT researchers
+Purple teams · red teams · SOC analysts · detection engineers · IoT security teams · cybersecurity researchers · academic institutions · security students
 
 ---
 
 ## Roadmap
 
-- [ ] Additional IoT device profiles
+- [ ] Additional IoT device profiles and protocols
 - [ ] BLE and Zigbee protocol support
 - [ ] ICS/SCADA device simulation
-- [ ] AI-assisted adversary planning
-- [ ] Automated detection validation
-- [ ] Multi-agent adversary emulation
-- [ ] Expanded ATT&CK coverage
+- [ ] Adaptive or conditional adversary behaviour
+- [ ] Physical and commercial IoT evaluation
+- [ ] Alternative SIEM and independently authored detection-rule evaluation
+- [ ] Firmware-level and physical-layer attack scenarios
 
 ---
 
@@ -393,13 +415,15 @@ For significant changes, please open an Issue first to discuss the proposed dire
 
 ## Citation
 
-If you use ThreatForge in academic research, publications, or security evaluations, please cite this repository using the included [`CITATION.cff`](CITATION.cff). BibTeX and other citation formats are generated automatically by GitHub.
+If you use ThreatForge in security assessments, purple-team exercises, research, or publications, please cite this repository using the included [`CITATION.cff`](CITATION.cff). BibTeX and other citation formats are generated automatically by GitHub.
+
+For the technical basis and validation results behind ThreatForge, see the [full research paper](research/IOT-adversary-emulation-research-paper.pdf).
 
 ---
 
 ## Disclaimer
 
-ThreatForge is developed **solely for educational, research, and authorized security testing purposes**. The authors are not responsible for any misuse of this software. Users are responsible for ensuring compliance with all applicable laws, organizational policies, and ethical guidelines.
+ThreatForge is developed **solely for educational, research, and authorised security testing purposes**. It is intended to be deployed in isolated, controlled environments and not against systems or devices without explicit permission. The authors are not responsible for misuse of the software. Users are responsible for ensuring compliance with applicable laws, organisational policies, and ethical guidelines.
 
 ---
 
