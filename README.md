@@ -47,7 +47,7 @@ ThreatForge integrates:
 - **Docker** — reproducible deployment for an isolated security-testing environment
 
 <p align="center">
- <img src="research/screenshots/Fig_01_Overall_Framework_Architecture.png" width="786" alt="ThreatForge closed-loop architecture: CALDERA, ThreatForge Agent, Node-RED, and Wazuh">
+ <img src="research/screenshots/Fig_01_Overall_Framework_Architecture.png" width="666" alt="ThreatForge closed-loop architecture: CALDERA, ThreatForge Agent, Node-RED, and Wazuh">
 </p>
 
 ThreatForge is built for teams that need evidence, not assumptions: **execute the attack, verify the resulting activity, and confirm the alert**. This creates a direct execution-to-telemetry-to-detection workflow for IoT security validation.
@@ -56,17 +56,20 @@ Built for **red and purple teams, detection engineers, SOC analysts, IoT securit
 
 ## Key Results at a Glance
 
-Across **25 repeated laboratory runs** of the five-technique `Custom IoT Adversary` profile, ThreatForge recorded **125 technique instances** and the reported performance. These results were obtained under controlled laboratory conditions. See the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) for methodology, statistics, limitations, and detailed results.
+Across 25 repeated laboratory runs of the five-technique Custom IoT Adversary profile, ThreatForge evaluated **125 technique instances** and achieved 94.4% detection coverage, 89.8% precision, and a 91.6% F1-score, with a mean time to detect of 59.0 s and 0.60 false positives per run. This demonstrates the framework's ability to execute repeatable ATT&CK-aligned IoT attack scenarios, generate observable telemetry, and validate corresponding security detections. **The table below defines the evaluation terms and summarizes the benchmark results.** See the [full research paper](research/ThreatForge_ACIG_Manuscript_Giridharan-Veda.pdf) for methodology, statistics, limitations, and detailed results. 
 
 <div align="center">
 
-| Metric | Result |
-|---|---:|
-| **Detection Coverage** | **94.4% ± 9.2%** |
-| **Precision** | **89.8% ± 10.4%** |
-| **F1-score** | **91.6% ± 7.5%** |
-| **Mean Time to Detect (MTTD)** | **59.0 ± 7.0 s** |
-| **False Positives per Run** | **0.60 ± 0.65** |
+| Term / Metric | Meaning | Interpretation in ThreatForge | Benchmark Result |
+|---|---|---|---:|
+| **TP — True Positive** | Recorded when the expected activity and corresponding Wazuh alert was generated | Attack occurred and the expected detection was generated | **118** |
+| **FP — False Positive** | Recorded when a Wazuh alert could not be associated with executed adversary techniques | Alert occurred without a matching ground-truth attack event | **15** |
+| **FN — False Negative** | Recorded when the expected activity occurred but no corresponding alert was generated | Attack occurred but the expected detection was missed | **7** |
+| **Detection Coverage** | How many executed attacks were detected | Measures defensive visibility across evaluated technique instances | **94.4% ± 9.2%** |
+| **Precision** | How accurately the alerts corresponded to executed technique | Measures detection accuracy and resistance to false alerts | **89.8% ± 10.4%** |
+| **F1-score** |  Balance between Coverage and Precision | Balances detection completeness and detection accuracy | **91.6% ± 7.5%** |
+| **MTTD** | Time from adversary execution to detection alert  | Measures how quickly detected activity generated an alert | **59.0 ± 7.0 s** |
+| **False Positives / Run** |  Average noise or false alerts  | Measures alert noise during testing | **0.60 ± 0.65** |
 
 </div>
 
