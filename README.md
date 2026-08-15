@@ -166,11 +166,13 @@ ThreatForge maps each evaluated action to an ATT&CK technique so security teams 
 
 <p align="center">
   <img src="research/screenshots/Fig_04_IoT_Specific_Custom_Abilities_CALDERA.png" width="440" alt="ThreatForge IoT abilities registered in MITRE CALDERA">
-  &nbsp;&nbsp;
-  <img src="research/screenshots/Fig_07_CALDERA_Agent_Log_Integrity_Verification.png" width="440" alt="Custom IoT Adversary profile ability execution logs">
-</p>
+  <p align="center"><em>ThreatForge IoT abilities and the `Custom IoT Adversary` profile configured in CALDERA for repeatable execution.</em></p>
 
-<p align="center"><em>ThreatForge IoT abilities and the `Custom IoT Adversary` profile configured in CALDERA for repeatable execution.</em></p>
+  &nbsp;&nbsp;
+
+<p align="center">
+  <img src="research/screenshots/Fig_08_Five_Stage_Kill_Chain_Execution.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+<p align="center"><em>Five-stage `Custom IoT Adversary` profile executing in CALDERA across reconnaissance, collection, impact, and lateral movement.</em></p>
 
 ---
 
@@ -314,11 +316,10 @@ ThreatForge has been exercised across **25 laboratory runs** of the `Custom IoT 
 These figures come from an **isolated Node-RED smart-home environment** and should be read as controlled performance evidence, not a guarantee of production performance across every IoT deployment. For methodology, statistical detail, confidence intervals, and limitations, see the [full research paper](research/IOT-adversary-emulation-research-paper.pdf).
 
 <p align="center">
-  <img src="research/screenshots/Fig_08_Five_Stage_Kill_Chain_Execution.png" width="620" alt="CALDERA operation results — five-stage IoT attack chain executed against host geeky">
+   <img src="research/screenshots/Fig_07_CALDERA_Agent_Log_Integrity_Verification.png" width="440" alt="Custom IoT Adversary profile ability execution logs">
 </p>
 
 <p align="center"><em>Five-stage `Custom IoT Adversary` profile executing in CALDERA across reconnaissance, collection, impact, and lateral movement.</em></p>
-
 
 <p align="center">
   <img src="research/screenshots/Fig_11_Detection_Performance_Summary.png" width="600" alt="ThreatForge detection performance summary across repeated validation runs">
