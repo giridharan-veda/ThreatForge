@@ -1,5 +1,7 @@
 # Security Policy
 
+<img src="research/screenshots/ThreatForge-Github.png" width="100%" alt="ThreatForge — ATT&CK-aligned IoT adversary emulation and closed-loop detection validation platform">
+
 ThreatForge is an open-source IoT adversary emulation and detection validation platform designed for authorised security testing, controlled laboratory environments, purple-team exercises, detection engineering, and cybersecurity research.
 
 Security issues affecting ThreatForge are taken seriously. We encourage responsible disclosure so vulnerabilities can be assessed and addressed without unnecessary public exposure.
